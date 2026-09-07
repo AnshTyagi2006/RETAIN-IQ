@@ -1,0 +1,1425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Customer Intelligence | RetainIQ</title>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap');
+
+:root{
+  --bg:#080a0b;--surface:#0e1315;--surface2:#12181b;
+  --line:rgba(255,255,255,.085);--line2:rgba(255,255,255,.045);
+  --white:#f7f8f9;--text:#d2d8da;--muted:#7d888e;--dim:#58646a;
+  --orange:#ff6a2a;--orange2:#ff8d4d;--red:#ff6268;--amber:#e4a047;--green:#2ac28b;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  min-height:100vh;
+  color:var(--text);
+  font-family:"DM Sans",Arial,sans-serif;
+  background:
+    radial-gradient(900px 560px at 88% 10%, rgba(255,106,42,.13), transparent 62%),
+    radial-gradient(760px 520px at 4% 46%, rgba(255,106,42,.075), transparent 66%),
+    radial-gradient(680px 420px at 58% 100%, rgba(255,86,28,.055), transparent 70%),
+    linear-gradient(135deg,#07090a 0%,#0a0b0c 42%,#110b09 100%);
+  font-size:14px;
+  line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+  overflow-x:hidden;
+}
+body:before{
+  content:"";position:fixed;width:760px;height:760px;right:-620px;top:110px;
+  border:1px solid rgba(244, 73, 0, 0.09);border-radius:50%;pointer-events:none;
+}
+header{
+  height:78px;padding:0 clamp(24px,6.3vw,104px);display:flex;align-items:center;
+  justify-content:space-between;position:sticky;top:0;z-index:100;
+  background:linear-gradient(90deg,rgba(7,9,10,.96),rgba(10,10,10,.90),rgba(17,9,7,.92));border-bottom:1px solid rgba(255,255,255,.075);backdrop-filter:blur(20px);
+}
+.logo{display:flex;align-items:center;gap:10px;color:var(--white);font-family:"Space Grotesk",sans-serif;font-size:21px;font-weight:700;letter-spacing:-.7px}
+.logo-mark{width:29px;height:27px;position:relative}.logo-mark i{position:absolute;bottom:0;width:5px;border-radius:3px 3px 1px 1px;background:var(--orange)}.logo-mark i:nth-child(1){left:0;height:12px}.logo-mark i:nth-child(2){left:11px;height:19px}.logo-mark i:nth-child(3){left:22px;height:26px}
+.header-right{display:flex;align-items:center;gap:18px}.engine-status{display:flex;align-items:center;gap:7px;padding:7px 11px;border:1px solid rgba(42,194,139,.18);border-radius:999px;color:#91a09a;background:rgba(42,194,139,.035);font-size:9px;font-weight:600}.engine-status:before{content:"";width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 0 4px rgba(42,194,139,.07)}.dashboard-link{color:#7f898f;text-decoration:none;font-size:10px}.dashboard-link:hover{color:#fff}
+.container{width:min(1320px,calc(100% - 64px));margin:auto;padding:48px 0 70px;position:relative;z-index:2}
+.page-top{display:flex;align-items:flex-end;justify-content:space-between;gap:35px;margin-bottom:27px}
+.eyebrow{display:flex;align-items:center;gap:9px;margin-bottom:11px;color:var(--orange2);font-size:9px;font-weight:700;letter-spacing:2px}.eyebrow:before{content:"";width:28px;height:1px;background:var(--orange)}
+.page-title h1{color:#ffffff;font-family:"Space Grotesk",sans-serif;font-size:56px;line-height:.98;letter-spacing:-3.1px;font-weight:700}.page-title h1 span{color:var(--orange);text-shadow:0 0 34px rgba(255,106,42,.12)}.page-title p{margin-top:11px;color:#aeb7bb;font-size:14px;font-weight:500}
+.dataset-context{min-width:260px;padding:14px 16px;background:rgba(255,255,255,.018);border:1px solid var(--line);border-radius:11px}.context-label{display:block;margin-bottom:7px;color:#8b969b;font-size:9px;font-weight:700;letter-spacing:1.3px;text-transform:uppercase}.context-main{display:flex;justify-content:space-between;align-items:center;gap:14px}.context-name{color:#f0f3f4;font-size:12px;font-weight:650}.context-state{color:#8b969b;font-size:10px}.context-state:before{content:"●";color:var(--green);margin-right:5px}
+
+/* Clean four-card summary — no extra chart/slider */
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:11px;margin-bottom:18px}
+.metric{min-height:108px;padding:18px 19px;position:relative;overflow:hidden;border:1px solid var(--line);border-radius:12px;background:linear-gradient(145deg,#11171a,#0d1214)}
+.metric:after{content:"";position:absolute;width:120px;height:120px;right:-45px;bottom:-70px;border:1px solid rgba(255,255,255,.035);border-radius:50%}
+.metric:before{content:"";position:absolute;left:0;top:0;width:44px;height:2px;background:#667178}.metric.high:before{background:var(--red)}.metric.medium:before{background:var(--amber)}.metric.low:before{background:var(--green)}
+.metric-label{display:block;margin-bottom:9px;color:#9aa5aa;font-size:9px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase}.metric-row{display:flex;align-items:baseline;justify-content:space-between;gap:10px}.metric-number{color:#f2f4f5;font-family:"Space Grotesk",sans-serif;font-size:30px;font-weight:700;letter-spacing:-1.2px}.metric-note{color:#89949a;font-size:10px}
+
+/* Filter workspace: only the essential controls are visible initially */
+.controls{padding:15px;margin-bottom:10px;border:1px solid var(--line);border-radius:13px;background:linear-gradient(145deg,#111719,#0d1214);box-shadow:0 20px 55px rgba(0,0,0,.18)}
+.controls-label{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}.controls-label strong{color:#e6e9ea;font-size:9px;font-weight:800;letter-spacing:.8px}.controls-label span{color:#89949a;font-size:10px}
+.controls-grid{display:grid;grid-template-columns:minmax(280px,2.4fr) minmax(170px,1fr) minmax(200px,1.2fr) auto auto;gap:9px;align-items:center}
+.search-box{position:relative}.search-box:before{content:"⌕";position:absolute;left:12px;top:50%;transform:translateY(-53%);color:#6f7b81;font-size:17px;z-index:1}
+input,select{width:100%;height:42px;padding:0 12px;color:#d3d8da;background:#090e10;border:1px solid rgba(255,255,255,.10);border-radius:8px;outline:none;font-family:inherit;font-size:12px;font-weight:550;transition:.2s ease}.search-box input{padding-left:34px}input::placeholder{color:#7d898f}input:focus,select:focus{border-color:rgba(255,106,42,.50);box-shadow:0 0 0 3px rgba(255,106,42,.055)}
+select{appearance:none;-webkit-appearance:none;padding-right:34px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M3 4.5 6 7.5 9 4.5' fill='none' stroke='%2379868c' stroke-width='1.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center}select option{background:#101518;color:#dce1e3}
+.filter-toggle{height:42px;padding:0 15px;display:flex;align-items:center;justify-content:center;gap:8px;color:#e5e9ea;background:linear-gradient(180deg,#1a2124,#141a1d);border:1px solid rgba(255,255,255,.13);border-radius:8px;cursor:pointer;font-family:inherit;font-size:11px;font-weight:700;white-space:nowrap;transition:.2s;box-shadow:inset 0 1px rgba(255,255,255,.035)}
+.filter-toggle:hover,.filter-toggle.open{color:#ff9a68;background:rgba(255,106,42,.065);border-color:rgba(255,106,42,.34);box-shadow:0 0 0 3px rgba(255,106,42,.035),0 8px 28px rgba(255,106,42,.055)}
+.filter-icon{width:20px;height:20px;display:grid;place-items:center;border:1px solid currentColor;border-radius:5px;font-size:10px}.filter-count{min-width:17px;height:17px;padding:0 4px;display:none;place-items:center;color:#0b0e0f;background:var(--orange);border-radius:99px;font-size:8px;font-weight:800}.filter-count.visible{display:grid}
+.clear-button{height:42px;padding:0 14px;color:#7f8a90;background:transparent;border:1px solid rgba(255,255,255,.09);border-radius:8px;cursor:pointer;font-family:inherit;font-size:11px;font-weight:650;transition:.2s}.clear-button:hover{color:#fff;border-color:rgba(255,106,42,.35);background:rgba(255,106,42,.045)}
+
+/* Expanded filter panel */
+.advanced-filters{display:none;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:12px;padding:14px 0 1px;border-top:1px solid var(--line)}.advanced-filters.open{display:grid}
+.filter-field{padding:11px;border:1px solid var(--line2);border-radius:9px;background:rgba(255,255,255,.012);transition:.2s}.filter-field:hover{border-color:rgba(255,255,255,.09);background:rgba(255,255,255,.02)}
+.filter-field label{display:flex;align-items:center;gap:6px;margin:0 0 7px 1px;color:#9aa5aa;font-size:10px;font-weight:700;letter-spacing:.45px;text-transform:uppercase}.filter-field label:before{content:"";width:4px;height:4px;border-radius:50%;background:var(--orange)}.filter-field select{height:38px}
+
+/* Risk segmentation is handled by the primary Risk Level filter. */
+
+/* Table */
+.table-card{overflow:hidden;border:1px solid var(--line);border-radius:13px;background:#0c1113;box-shadow:0 22px 65px rgba(0,0,0,.24)}.table-heading{min-height:58px;padding:0 18px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);background:linear-gradient(90deg,rgba(255,255,255,.018),transparent)}.table-heading strong{color:#e8eced;font-size:9px;font-weight:800;letter-spacing:.9px}.table-heading span{color:#89949a;font-size:10px}.table-scroll{overflow-x:auto}table{width:100%;min-width:1000px;border-collapse:collapse}th,td{text-align:left;border-bottom:1px solid var(--line2)}th{height:39px;padding:0 16px;color:#9aa5aa;background:#090e10;font-size:9px;font-weight:800;letter-spacing:.9px;text-transform:uppercase}td{height:70px;padding:12px 16px;color:#adb5b9;font-size:12px;font-weight:500;vertical-align:middle}tbody tr{transition:.18s ease}tbody tr:hover{background:rgba(255,106,42,.024);box-shadow:inset 2px 0 0 var(--orange)}tbody tr:last-child td{border-bottom:0}.customer-name{color:#e2e7e8;font-weight:650}.customer-id{margin-top:2px;color:#77848a;font-size:9px}.probability-cell{min-width:160px}.probability-value{display:flex;align-items:center;margin-bottom:6px;color:#f0f3f4;font-size:12px;font-weight:700}.probability-track{width:100%;height:4px;background:#1a2225;border-radius:99px;overflow:hidden}.probability-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,#e85529,var(--orange2))}.risk{display:inline-flex;align-items:center;gap:6px;padding:6px 9px;border-radius:7px;font-size:9px;font-weight:800;letter-spacing:.55px;text-transform:uppercase}.risk:before{content:"";width:5px;height:5px;border-radius:50%}.risk.high{color:#ff8588;background:rgba(255,98,104,.07);border:1px solid rgba(255,98,104,.15)}.risk.high:before{background:var(--red)}.risk.medium{color:#efb15e;background:rgba(228,160,71,.06);border:1px solid rgba(228,160,71,.14)}.risk.medium:before{background:var(--amber)}.risk.low{color:#68d5ab;background:rgba(42,194,139,.055);border:1px solid rgba(42,194,139,.13)}.risk.low:before{background:var(--green)}.risk.unknown{color:#929da2;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.07)}.prediction{color:#dbe0e2;font-size:12px}.action-text{max-width:210px;color:#d5dcde;font-size:11px;line-height:1.4;font-weight:600}.priority{margin-top:3px;color:#8a959a;font-size:9px;font-weight:700;letter-spacing:.35px;text-transform:uppercase}.view-button{min-width:111px;height:34px;padding:0 12px;color:#ff9865;background:rgba(255,106,42,.045);border:1px solid rgba(255,106,42,.24);border-radius:7px;cursor:pointer;font-family:inherit;font-size:10px;font-weight:700;transition:.2s}.view-button:hover{color:#090c0d;background:var(--orange);border-color:var(--orange);box-shadow:0 8px 22px rgba(255,106,42,.17);transform:translateY(-1px)}
+.loading-row{padding:55px;text-align:center;color:#707b81}.status{margin:10px 15px;color:#929da2;font-size:11px;text-align:center}.status.error{color:#ff777a}.table-footer{min-height:45px;padding:0 17px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--line);color:#89949a;font-size:10px}.footer-hint{display:flex;align-items:center;gap:6px}.footer-hint:before{content:"";width:5px;height:5px;border-radius:50%;background:var(--green)}.footer-brand{display:flex;justify-content:space-between;margin-top:16px;color:#414c52;font-size:8px}.footer-brand strong{color:#606c72}
+@media(max-width:1120px){.controls-grid{grid-template-columns:2fr 1fr 1.2fr auto auto}.advanced-filters{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:900px){.container{width:calc(100% - 34px)}.page-top{display:block}.dataset-context{margin-top:18px}.metrics{grid-template-columns:repeat(2,1fr)}.controls-grid{grid-template-columns:1fr 1fr}.search-box{grid-column:1/-1}.filter-toggle,.clear-button{width:100%}}
+@media(max-width:560px){header{padding:0 18px}.engine-status{display:none}.container{width:calc(100% - 24px);padding-top:30px}.page-title h1{font-size:39px;letter-spacing:-2px}.metrics{grid-template-columns:1fr}.controls-grid,.advanced-filters{grid-template-columns:1fr}.search-box{grid-column:auto}.filter-tabs{width:100%;overflow-x:auto}.filter-tab{min-width:98px}.filter-bar{display:block}.count{margin-top:8px}.table-footer,.footer-brand{display:block;line-height:1.8;padding-top:10px;padding-bottom:10px}}
+
+/* Professional RetainIQ ambient background */
+body::after{
+  content:"";
+  position:fixed;
+  inset:0;
+  z-index:0;
+  pointer-events:none;
+  opacity:.72;
+  background:
+    linear-gradient(116deg,transparent 0 25%,rgba(255,106,42,.045) 25.05%,transparent 25.15%),
+    linear-gradient(116deg,transparent 0 78%,rgba(255,106,42,.035) 78.05%,transparent 78.15%),
+    radial-gradient(circle at 18% 22%,rgba(255,106,42,.035) 0 1px,transparent 1.5px);
+  background-size:100% 100%,100% 100%,24px 24px;
+  mix-blend-mode:screen;
+}
+
+body:before{
+  content:"";
+  position:fixed;
+  width:760px;
+  height:760px;
+  right:-620px;
+  top:90px;
+  border:1px solid rgba(255,106,42,.16);
+  border-radius:50%;
+  pointer-events:none;
+  z-index:0;
+  box-shadow:
+    0 0 100px rgba(255,106,42,.035),
+    inset 0 0 80px rgba(255,106,42,.02);
+}
+
+.container{
+  width:min(1320px,calc(100% - 64px));
+  margin:auto;
+  padding:48px 0 70px;
+  position:relative;
+  z-index:2;
+}
+
+/* Small warm edge accents give the page depth without making it busy */
+.container::before{
+  content:"";
+  position:absolute;
+  left:-120px;
+  top:190px;
+  width:280px;
+  height:1px;
+  background:linear-gradient(90deg,transparent,rgba(255,106,42,.32),transparent);
+  transform:rotate(58deg);
+  pointer-events:none;
+}
+
+.container::after{
+  content:"";
+  position:absolute;
+  right:-180px;
+  top:620px;
+  width:360px;
+  height:1px;
+  background:linear-gradient(90deg,transparent,rgba(255,106,42,.24),transparent);
+  transform:rotate(-27deg);
+  pointer-events:none;
+}
+
+/* Keep content surfaces slightly transparent so the orange atmosphere
+   subtly shows through, while preserving table/filter readability. */
+.metric,
+.controls,
+.table-card{
+  box-shadow:
+    0 22px 65px rgba(0,0,0,.28),
+    0 0 0 1px rgba(255,106,42,.012);
+}
+
+.metric{
+  background:
+    radial-gradient(180px 100px at 100% 100%,rgba(255,106,42,.045),transparent 70%),
+    linear-gradient(145deg,#111719,#0d1214);
+}
+
+.controls{
+  background:
+    radial-gradient(500px 160px at 100% 0%,rgba(255,106,42,.035),transparent 70%),
+    linear-gradient(145deg,#111719,#0d1214);
+}
+
+.table-card{
+  background:
+    radial-gradient(620px 260px at 100% 0%,rgba(255,106,42,.025),transparent 70%),
+    #0b1012;
+}
+
+.dataset-context{
+  background:
+    radial-gradient(180px 100px at 100% 0%,rgba(255,106,42,.045),transparent 70%),
+    rgba(255,255,255,.018);
+}
+
+</style>
+
+
+<style id="readability-overrides">
+/* Readability pass */
+.page-title p{max-width:650px}
+.controls-label strong{font-size:10px;color:#f0f2f3}
+.controls-label span{font-size:10px;color:#879298}
+
+.metric-number{font-size:32px}
+.metric-note{font-size:10px;color:#7f8b91}
+.metric-label{font-size:9px;color:#9aa5aa}
+
+.controls{padding:18px}
+.controls-grid{grid-template-columns:minmax(320px,2.7fr) minmax(170px,1fr) minmax(220px,1.25fr) auto auto}
+input,select{height:46px;font-size:12px;color:#e5e9ea}
+input::placeholder{color:#78848a}
+.filter-toggle,.clear-button{height:46px;font-size:11px}
+
+.advanced-filters{gap:12px;padding-top:16px}
+.filter-field{padding:13px}
+.filter-field label{font-size:10px;color:#a2adb1}
+.filter-field select{height:42px;font-size:11px}
+
+.filter-bar{
+  margin:16px 0 12px;
+  min-height:28px;
+}
+.filter-bar .count{
+  margin-left:auto;
+  color:#a1abb0;
+  font-size:10px;
+}
+
+/* Bigger table card and clearer hierarchy */
+.table-card{
+  border-color:rgba(255,255,255,.11);
+  background:#0b1012;
+}
+.table-heading{
+  min-height:62px;
+  padding:0 22px;
+}
+.table-heading strong{
+  color:#f0f3f4;
+  font-size:11px;
+  letter-spacing:.9px;
+}
+.table-heading span{
+  color:#89959a;
+  font-size:10px;
+}
+table{
+  min-width:1080px;
+}
+th{
+  height:48px;
+  padding:0 20px;
+  color:#a6b0b4;
+  background:#080d0f;
+  font-size:9px;
+  letter-spacing:1.05px;
+}
+td{
+  height:82px;
+  padding:15px 20px;
+  color:#c2cace;
+  font-size:12px;
+  line-height:1.5;
+}
+tbody tr:hover{
+  background:rgba(255,106,42,.035);
+}
+.customer-name{
+  color:#f1f4f5;
+  font-size:12px;
+  font-weight:700;
+}
+.customer-id{
+  color:#77848a;
+  font-size:9px;
+  margin-top:3px;
+}
+.probability-cell{min-width:185px}
+.probability-value{
+  color:#f1f4f5;
+  font-size:13px;
+  font-weight:750;
+  margin-bottom:7px;
+}
+.probability-track{
+  height:5px;
+  background:#1d262a;
+}
+.prediction{
+  color:#d9dfe1;
+  font-size:12px;
+  font-weight:550;
+}
+.action-text{
+  color:#d6dcde;
+  font-size:11px;
+  font-weight:600;
+  max-width:240px;
+}
+.priority{
+  color:#8b979c;
+  font-size:9px;
+  margin-top:4px;
+}
+.risk{
+  padding:7px 10px;
+  font-size:9px;
+}
+.view-button{
+  min-width:126px;
+  height:38px;
+  font-size:10px;
+  border-radius:8px;
+}
+
+.table-footer{
+  min-height:50px;
+  padding:0 20px;
+  font-size:10px;
+}
+.footer-brand{font-size:9px}
+
+/* Hide empty filter-bar if it has no actual controls after tab removal. */
+.filter-bar:has(.filter-tabs:empty){
+  display:none;
+}
+
+@media(max-width:900px){
+  .controls-grid{grid-template-columns:1fr 1fr}
+  .search-box{grid-column:1/-1}
+}
+</style>
+
+</head>
+
+<body>
+
+<header>
+    <div class="logo">
+        <span class="logo-mark" aria-hidden="true">
+            <i></i><i></i><i></i>
+        </span>
+        RETAIN IQ
+    </div>
+
+    <div class="header-right">
+        <div class="engine-status">AI Engine Online</div>
+        <a class="dashboard-link" href="/dashboard">← Dashboard</a>
+    </div>
+</header>
+
+<main class="container">
+
+    <div class="page-top">
+        <div class="page-title">
+            <div class="eyebrow">CUSTOMER ANALYTICS</div>
+            <h1>Customer <span>Intelligence.</span></h1>
+            <p>Search, prioritize and explore individual customer churn risk.</p>
+        </div>
+
+        <div class="dataset-context">
+            <span class="context-label">Active Dataset</span>
+            <div class="context-main">
+                <span class="context-name">Customer Churn Dataset</span>
+                <span class="context-state">Live analysis</span>
+            </div>
+        </div>
+    </div>
+
+<section class="metrics" aria-label="Customer risk summary">
+  <div class="metric"><span class="metric-label">Total Customers</span><div class="metric-row"><span class="metric-number" id="visibleCount">—</span><span class="metric-note">visible</span></div></div>
+  <div class="metric high"><span class="metric-label">High Risk</span><div class="metric-row"><span class="metric-number" id="visibleHigh">—</span><span class="metric-note">immediate focus</span></div></div>
+  <div class="metric medium"><span class="metric-label">Medium Risk</span><div class="metric-row"><span class="metric-number" id="visibleMedium">—</span><span class="metric-note">monitor</span></div></div>
+  <div class="metric low"><span class="metric-label">Low Risk</span><div class="metric-row"><span class="metric-number" id="visibleLow">—</span><span class="metric-note">stable</span></div></div>
+</section><section class="controls" aria-label="Customer filters">
+  <div class="controls-label"><strong>FILTER CUSTOMERS</strong><span>Search first · refine only when needed</span></div>
+  <div class="controls-grid">
+    <div class="search-box"><input type="text" id="search" placeholder="Search customer ID..."></div>
+    <select id="riskFilter" aria-label="Risk level" title="Filter by customer risk level"><option value="all">All Risk Levels</option><option value="High Risk">High Risk</option><option value="Medium Risk">Medium Risk</option><option value="Low Risk">Low Risk</option></select>
+    <select id="sortBy" aria-label="Sort customers"><option value="probability-desc">Highest churn probability</option><option value="probability-asc">Lowest churn probability</option><option value="risk">Risk level</option></select>
+    <button type="button" class="filter-toggle" id="filterToggle" aria-expanded="false"><span class="filter-icon">☷</span><span>More Filters</span><span class="filter-count" id="filterCount">0</span></button>
+    <button type="button" class="clear-button" id="clearFilters">Reset</button>
+  </div>
+  <div class="advanced-filters" id="advancedFilters">
+    <div class="filter-field"><label for="satisfactionFilter">Satisfaction</label><select id="satisfactionFilter"><option value="all">All satisfaction scores</option><option value="1">Score 1</option><option value="2">Score 2</option><option value="3">Score 3</option><option value="4">Score 4</option><option value="5">Score 5</option></select></div>
+    <div class="filter-field"><label for="complaintFilter">Complaint status</label><select id="complaintFilter"><option value="all">All complaint statuses</option><option value="yes">Complained</option><option value="no">No complaint</option></select></div>
+    <div class="filter-field"><label for="tenureFilter">Customer tenure</label><select id="tenureFilter"><option value="all">All tenure ranges</option><option value="0-6">0–6 months</option><option value="7-12">7–12 months</option><option value="13-24">13–24 months</option><option value="25+">25+ months</option></select></div>
+    <div class="filter-field"><label for="categoryFilter">Order category</label><select id="categoryFilter"><option value="all">All categories</option></select></div>
+  </div>
+</section>
+
+
+    <div class="filter-bar"><div class="count" id="count">Loading customers...</div></div>
+
+    <section class="table-card">
+
+        <div class="table-heading">
+            <strong>CUSTOMER INTELLIGENCE</strong>
+            <span>Sorted by churn probability</span>
+        </div>
+
+        <div class="table-scroll">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Customer</th>
+                        <th>Churn Probability</th>
+                        <th>Risk Level</th>
+                        <th>Prediction</th>
+                        <th>Retention Action</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+
+                <tbody id="customerTable">
+                    <tr>
+                        <td colspan="6" class="loading-row">Loading customers...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="table-footer">
+            <span class="footer-hint">Customer predictions loaded from the active analysis.</span>
+            <span>Use “View Customer” for detailed explainability.</span>
+        </div>
+
+        <div class="status" id="status"></div>
+    </section>
+
+    <div class="footer-brand">
+        <span><strong>RETAIN IQ</strong> · Customer Retention Intelligence</span>
+        <span>Prediction · Explainability · Risk · Retention</span>
+    </div>
+
+</main>
+
+<script>
+
+/*
+============================================================
+RETAIN IQ
+INTERACTIVE CUSTOMER EXPLORER
+============================================================
+
+Data priority:
+
+1. Current bulkResult from Sample / Upload
+2. Persisted database customer data
+
+No new prediction is generated when opening
+an existing bulk-analysis customer.
+============================================================
+*/
+
+let customers = [];
+let filteredCustomers = [];
+
+
+/*
+============================================================
+HELPERS
+============================================================
+*/
+
+function getCustomerId(customer, index) {
+
+    return (
+        customer.CustomerID ??
+        customer.customer_id ??
+        customer.customer_index ??
+        index + 1
+    );
+
+}
+
+
+function getProbability(customer) {
+
+    const probability = Number(
+        customer.churn_probability ??
+        customer.probability ??
+        0
+    );
+
+    if (Number.isNaN(probability)) {
+        return 0;
+    }
+
+    return Math.max(
+        0,
+        Math.min(1, probability)
+    );
+
+}
+
+
+function getRiskLevel(customer) {
+
+    if (customer.risk_level) {
+        return customer.risk_level;
+    }
+
+    const probability =
+        getProbability(customer);
+
+    if (probability >= 0.70) {
+        return "High Risk";
+    }
+
+    if (probability >= 0.40) {
+        return "Medium Risk";
+    }
+
+    return "Low Risk";
+
+}
+
+
+function getRiskClass(risk) {
+
+    if (risk === "High Risk") {
+        return "high";
+    }
+
+    if (risk === "Medium Risk") {
+        return "medium";
+    }
+
+    if (risk === "Low Risk") {
+        return "low";
+    }
+
+    return "unknown";
+
+}
+
+
+function getTenureGroup(value) {
+
+    const tenure = Number(value);
+
+    if (Number.isNaN(tenure)) {
+        return "";
+    }
+
+    if (tenure <= 6) {
+        return "0-6";
+    }
+
+    if (tenure <= 12) {
+        return "7-12";
+    }
+
+    if (tenure <= 24) {
+        return "13-24";
+    }
+
+    return "25+";
+
+}
+
+
+function getComplaintGroup(value) {
+
+    if (
+        value === true ||
+        value === 1 ||
+        String(value).toLowerCase() === "1" ||
+        String(value).toLowerCase() === "true" ||
+        String(value).toLowerCase() === "yes"
+    ) {
+        return "yes";
+    }
+
+    return "no";
+
+}
+
+
+function escapeHtml(value) {
+
+    return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+
+}
+
+
+/*
+============================================================
+LOAD CURRENT ANALYSIS
+============================================================
+*/
+
+async function loadCustomers() {
+
+    const status =
+        document.getElementById("status");
+
+    try {
+
+        status.className = "status";
+        status.textContent =
+            "Loading customers...";
+
+
+        /*
+        --------------------------------------------------------
+        FIRST: CURRENT BULK ANALYSIS
+        --------------------------------------------------------
+        */
+
+        const stored =
+            sessionStorage.getItem(
+                "bulkResult"
+            );
+
+        if (stored) {
+
+            try {
+
+                const result =
+                    JSON.parse(stored);
+
+                if (
+                    result &&
+                    result.success &&
+                    Array.isArray(result.customers) &&
+                    result.customers.length
+                ) {
+
+                    customers =
+                        result.customers;
+
+                    populateCategoryFilter();
+
+                    applyFilters();
+
+                    return;
+
+                }
+
+            }
+            catch (storageError) {
+
+                console.warn(
+                    "Invalid bulkResult:",
+                    storageError
+                );
+
+            }
+
+        }
+
+
+        /*
+        --------------------------------------------------------
+        SECOND: DATABASE
+        --------------------------------------------------------
+        */
+
+        const datasetId =
+            sessionStorage.getItem(
+                "datasetId"
+            );
+
+        let url =
+            "/customers/data";
+
+        if (datasetId) {
+
+            url +=
+                "?dataset_id=" +
+                encodeURIComponent(
+                    datasetId
+                );
+
+        }
+
+        const response =
+            await fetch(url);
+
+        const result =
+            await response.json();
+
+        if (
+            !response.ok ||
+            !result.success
+        ) {
+
+            throw new Error(
+                result.error ||
+                "Unable to load customers."
+            );
+
+        }
+
+        customers =
+            Array.isArray(result.customers)
+                ? result.customers
+                : [];
+
+        populateCategoryFilter();
+
+        applyFilters();
+
+    }
+    catch (error) {
+
+        console.error(
+            "Customer loading error:",
+            error
+        );
+
+        document.getElementById("count")
+            .textContent =
+            "Unable to load customers.";
+
+        status.className =
+            "status error";
+
+        status.textContent =
+            "Error: " +
+            error.message;
+
+    }
+
+}
+
+
+/*
+============================================================
+CATEGORY FILTER
+============================================================
+*/
+
+function populateCategoryFilter() {
+
+    const select =
+        document.getElementById(
+            "categoryFilter"
+        );
+
+    const categories =
+        new Set();
+
+    customers.forEach(customer => {
+
+        const value =
+            customer.preferred_order_category;
+
+        if (
+            value !== null &&
+            value !== undefined &&
+            String(value).trim()
+        ) {
+
+            categories.add(
+                String(value).trim()
+            );
+
+        }
+
+    });
+
+    select.innerHTML =
+        '<option value="all">All Categories</option>';
+
+    [...categories]
+        .sort()
+        .forEach(category => {
+
+            const option =
+                document.createElement(
+                    "option"
+                );
+
+            option.value = category;
+            option.textContent = category;
+
+            select.appendChild(option);
+
+        });
+
+}
+
+
+/*
+============================================================
+FILTER + SORT
+============================================================
+*/
+
+function applyFilters() {
+
+    const search =
+        document.getElementById(
+            "search"
+        ).value
+        .trim()
+        .toLowerCase();
+
+    const selectedRisk =
+        document.getElementById(
+            "riskFilter"
+        ).value;
+
+    const satisfaction =
+        document.getElementById(
+            "satisfactionFilter"
+        ).value;
+
+    const complaint =
+        document.getElementById(
+            "complaintFilter"
+        ).value;
+
+    const tenure =
+        document.getElementById(
+            "tenureFilter"
+        ).value;
+
+    const category =
+        document.getElementById(
+            "categoryFilter"
+        ).value;
+
+    const selectedSort =
+        document.getElementById(
+            "sortBy"
+        ).value;
+
+
+    filteredCustomers =
+        customers.filter(customer => {
+
+            const customerId =
+                String(
+                    getCustomerId(
+                        customer,
+                        customers.indexOf(customer)
+                    )
+                ).toLowerCase();
+
+            const risk =
+                getRiskLevel(customer);
+
+            const customerSatisfaction =
+                Number(
+                    customer.satisfaction_score
+                );
+
+            const customerComplaint =
+                getComplaintGroup(
+                    customer.complain
+                );
+
+            const customerTenure =
+                getTenureGroup(
+                    customer.tenure
+                );
+
+            const customerCategory =
+                String(
+                    customer.preferred_order_category ??
+                    ""
+                ).trim();
+
+
+            const matchesSearch =
+                !search ||
+                customerId.includes(search);
+
+            const matchesRisk =
+                selectedRisk === "all" ||
+                risk === selectedRisk;
+
+            const matchesSatisfaction =
+                satisfaction === "all" ||
+                customerSatisfaction ===
+                    Number(satisfaction);
+
+            const matchesComplaint =
+                complaint === "all" ||
+                customerComplaint === complaint;
+
+            const matchesTenure =
+                tenure === "all" ||
+                customerTenure === tenure;
+
+            const matchesCategory =
+                category === "all" ||
+                customerCategory === category;
+
+
+            return (
+                matchesSearch &&
+                matchesRisk &&
+                matchesSatisfaction &&
+                matchesComplaint &&
+                matchesTenure &&
+                matchesCategory
+            );
+
+        });
+
+
+    /*
+    --------------------------------------------------------
+    SORT
+    --------------------------------------------------------
+    */
+
+    if (
+        selectedSort ===
+        "probability-desc"
+    ) {
+
+        filteredCustomers.sort(
+            (a, b) =>
+                getProbability(b) -
+                getProbability(a)
+        );
+
+    }
+    else if (
+        selectedSort ===
+        "probability-asc"
+    ) {
+
+        filteredCustomers.sort(
+            (a, b) =>
+                getProbability(a) -
+                getProbability(b)
+        );
+
+    }
+    else if (
+        selectedSort === "risk"
+    ) {
+
+        const riskOrder = {
+            "High Risk": 1,
+            "Medium Risk": 2,
+            "Low Risk": 3
+        };
+
+        filteredCustomers.sort(
+            (a, b) =>
+                (
+                    riskOrder[
+                        getRiskLevel(a)
+                    ] || 99
+                ) -
+                (
+                    riskOrder[
+                        getRiskLevel(b)
+                    ] || 99
+                )
+        );
+
+    }
+
+
+    renderCustomers();
+
+}
+
+
+/*
+============================================================
+RENDER
+============================================================
+*/
+
+function renderCustomers() {
+
+    const table =
+        document.getElementById(
+            "customerTable"
+        );
+
+    const status =
+        document.getElementById(
+            "status"
+        );
+
+    table.innerHTML = "";
+
+
+    document.getElementById(
+        "count"
+    ).textContent =
+        `Showing ${filteredCustomers.length.toLocaleString()} of ${customers.length.toLocaleString()} customers`;
+
+
+    const counts = {
+        high: 0,
+        medium: 0,
+        low: 0
+    };
+
+    filteredCustomers.forEach(customer => {
+
+        const risk =
+            getRiskLevel(customer);
+
+        if (risk === "High Risk") {
+            counts.high++;
+        }
+        else if (risk === "Medium Risk") {
+            counts.medium++;
+        }
+        else if (risk === "Low Risk") {
+            counts.low++;
+        }
+
+    });
+
+    document.getElementById(
+        "visibleCount"
+    ).textContent =
+        filteredCustomers.length.toLocaleString();
+
+    document.getElementById(
+        "visibleHigh"
+    ).textContent =
+        counts.high.toLocaleString();
+
+    document.getElementById(
+        "visibleMedium"
+    ).textContent =
+        counts.medium.toLocaleString();
+
+    document.getElementById(
+        "visibleLow"
+    ).textContent =
+        counts.low.toLocaleString();
+
+
+
+    if (!filteredCustomers.length) {
+
+        status.className =
+            "status";
+
+        status.textContent =
+            "No customers match your filters.";
+
+        table.innerHTML = `
+            <tr>
+                <td colspan="6" class="loading-row">
+                    No matching customers
+                </td>
+            </tr>
+        `;
+
+        return;
+
+    }
+
+
+    status.textContent = "";
+
+
+    filteredCustomers.forEach(customer => {
+
+        const originalIndex =
+            customers.indexOf(customer);
+
+        const customerId =
+            getCustomerId(
+                customer,
+                originalIndex
+            );
+
+        const probability =
+            getProbability(customer);
+
+        const risk =
+            getRiskLevel(customer);
+
+        const riskClass =
+            getRiskClass(risk);
+
+        const prediction =
+            Number(
+                customer.prediction
+            );
+
+        const predictionText =
+            prediction === 1
+                ? "Likely to Churn"
+                : "Likely to Stay";
+
+
+        const retention =
+            customer.retention_action;
+
+        let actionText = "—";
+        let priorityText = "";
+
+        if (
+            retention &&
+            typeof retention === "object"
+        ) {
+
+            actionText =
+                retention.action ||
+                "—";
+
+            priorityText =
+                retention.priority
+                    ? `Priority: ${retention.priority}`
+                    : "";
+
+        }
+
+
+        const row =
+            document.createElement("tr");
+
+        row.innerHTML = `
+
+            <td>
+                <div class="customer-name">Customer ${escapeHtml(customerId)}</div>
+                <div class="customer-id">ID · ${escapeHtml(customerId)}</div>
+            </td>
+
+            <td class="probability-cell">
+                <div class="probability-value">
+                    <span>${(probability * 100).toFixed(1)}%</span>
+                </div>
+                <div class="probability-track">
+                    <div class="probability-fill" style="width:${Math.max(0, Math.min(100, probability * 100))}%"></div>
+                </div>
+            </td>
+
+            <td>
+                <span class="risk ${riskClass}">
+                    ${escapeHtml(risk)}
+                </span>
+            </td>
+
+            <td>
+                <span class="prediction">${predictionText}</span>
+            </td>
+
+            <td>
+                <div class="action-text">
+                    ${escapeHtml(actionText)}
+                    ${
+                        priorityText
+                            ? `<div class="priority">
+                                ${escapeHtml(priorityText)}
+                               </div>`
+                            : ""
+                    }
+                </div>
+            </td>
+
+            <td>
+                <button
+                    class="view-button"
+                    type="button"
+                    onclick="viewCustomer(${originalIndex})">
+                    View Customer →
+                </button>
+            </td>
+
+        `;
+
+        table.appendChild(row);
+
+    });
+
+}
+
+
+/*
+============================================================
+VIEW CUSTOMER
+============================================================
+*/
+
+function viewCustomer(index) {
+
+    const customer =
+        customers[index];
+
+    if (!customer) {
+        return;
+    }
+
+    sessionStorage.setItem(
+        "selectedCustomer",
+        JSON.stringify(customer)
+    );
+
+
+    /*
+    Keep the existing customer-page
+    fallback result compatible.
+    */
+
+    sessionStorage.setItem(
+        "customerResult",
+        JSON.stringify({
+
+            success: true,
+
+            customer: customer,
+
+            result: {
+
+                probability:
+                    getProbability(customer),
+
+                risk_level:
+                    getRiskLevel(customer),
+
+                prediction:
+                    Number(
+                        customer.prediction ?? 0
+                    ),
+
+                risk_factors:
+                    Array.isArray(
+                        customer.risk_factors
+                    )
+                        ? customer.risk_factors
+                        : [],
+
+                protective_factors:
+                    Array.isArray(
+                        customer.protective_factors
+                    )
+                        ? customer.protective_factors
+                        : [],
+
+                recommendation:
+                    customer.recommendation ||
+                    "",
+
+                retention_action:
+                    customer.retention_action ||
+                    null
+
+            }
+
+        })
+    );
+
+
+    window.location.href =
+        "/customer";
+
+}
+
+
+/*
+============================================================
+CLEAR FILTERS
+============================================================
+*/
+
+document
+    .getElementById("clearFilters")
+    .addEventListener(
+        "click",
+        function() {
+
+            document.getElementById(
+                "search"
+            ).value = "";
+
+            document.getElementById(
+                "riskFilter"
+            ).value = "all";
+
+            document.getElementById(
+                "satisfactionFilter"
+            ).value = "all";
+
+            document.getElementById(
+                "complaintFilter"
+            ).value = "all";
+
+            document.getElementById(
+                "tenureFilter"
+            ).value = "all";
+
+            document.getElementById(
+                "categoryFilter"
+            ).value = "all";
+
+            document.getElementById(
+                "sortBy"
+            ).value =
+                "probability-desc";
+
+            applyFilters();
+
+        }
+    );
+
+
+/*
+============================================================
+EVENT LISTENERS
+============================================================
+*/
+
+document
+    .getElementById("search")
+    .addEventListener(
+        "input",
+        applyFilters
+    );
+
+document
+    .getElementById("riskFilter")
+    .addEventListener(
+        "change",
+        applyFilters
+    );
+
+document
+    .getElementById("satisfactionFilter")
+    .addEventListener(
+        "change",
+        applyFilters
+    );
+
+document
+    .getElementById("complaintFilter")
+    .addEventListener(
+        "change",
+        applyFilters
+    );
+
+document
+    .getElementById("tenureFilter")
+    .addEventListener(
+        "change",
+        applyFilters
+    );
+
+document
+    .getElementById("categoryFilter")
+    .addEventListener(
+        "change",
+        applyFilters
+    );
+
+document
+    .getElementById("sortBy")
+    .addEventListener(
+        "change",
+        applyFilters
+    );
+
+
+/*
+============================================================
+START
+============================================================
+*/
+
+loadCustomers();
+
+</script>
+
+
+
+
+<script>
+window.addEventListener("error", function(event){
+    const status = document.getElementById("status");
+    if(status){
+        status.className = "status error";
+        status.textContent = "Interface error: " + (event.message || "Unable to render this view.");
+    }
+});
+</script>
+
+<script src="/static/effects.js"></script>
+
+<script>
+(function(){
+    const toggle = document.getElementById("filterToggle");
+    const panel = document.getElementById("advancedFilters");
+    const count = document.getElementById("filterCount");
+
+    if(toggle && panel){
+        toggle.addEventListener("click", function(){
+            const open = panel.classList.toggle("open");
+            toggle.classList.toggle("open", open);
+            toggle.setAttribute("aria-expanded", String(open));
+        });
+    }
+
+    function updateFilterCount(){
+        const ids = ["satisfactionFilter","complaintFilter","tenureFilter","categoryFilter"];
+        let active = 0;
+        ids.forEach(id => {
+            const el = document.getElementById(id);
+            if(el && el.value && el.value !== "all") active++;
+        });
+        if(count){
+            count.textContent = active;
+            count.classList.toggle("visible", active > 0);
+        }
+    }
+
+    ["satisfactionFilter","complaintFilter","tenureFilter","categoryFilter"].forEach(id=>{
+        const el=document.getElementById(id);
+        if(el) el.addEventListener("change",updateFilterCount);
+    });
+
+    const reset=document.getElementById("clearFilters");
+    if(reset){
+        reset.addEventListener("click",()=>{
+            setTimeout(updateFilterCount,0);
+        });
+    }
+
+    updateFilterCount();
+})();
+</script>
+
+</body>
+</html>

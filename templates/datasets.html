@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>RetainIQ - Dataset History</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f5f6f8;
+            color: #111827;
+        }
+
+        header {
+            background: #111827;
+            color: white;
+            padding: 18px 30px;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 35px auto;
+            padding: 0 20px;
+        }
+
+        .title {
+            margin-bottom: 25px;
+        }
+
+        .title h1 {
+            margin: 0 0 8px;
+        }
+
+        .title p {
+            margin: 0;
+            color: #6b7280;
+        }
+
+        .info {
+            background: white;
+            padding: 18px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            color: #6b7280;
+        }
+
+        .table-card {
+            background: white;
+            padding: 20px;
+            border-radius: 14px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 850px;
+        }
+
+        th,
+        td {
+            padding: 14px 12px;
+            border-bottom: 1px solid #eee;
+            text-align: left;
+            font-size: 14px;
+        }
+
+        th {
+            background: #f9fafb;
+        }
+
+        tr:hover {
+            background: #f9fafb;
+        }
+
+        .source {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: bold;
+            background: #eef2ff;
+        }
+
+        .select-button {
+            border: none;
+            background: #111827;
+            color: white;
+            padding: 8px 13px;
+            border-radius: 7px;
+            cursor: pointer;
+        }
+
+        .select-button:hover {
+            opacity: 0.9;
+        }
+
+        .status {
+            text-align: center;
+            padding: 35px;
+            color: #6b7280;
+        }
+
+        .error {
+            color: #dc2626;
+        }
+    </style>
+<link rel="stylesheet" href="/static/theme.css">
+</head>
+
+<body>
+
+<header>
+    RETAIN IQ
+</header>
+
+<main class="container">
+
+    <div class="title">
+        <h1>Dataset History</h1>
+        <p>View previously analyzed datasets and select one to explore.</p>
+    </div>
+
+    <div class="info">
+        Sample data is not shown here because the built-in sample dataset
+        is intentionally kept separate from MySQL.
+    </div>
+
+    <div class="table-card">
+
+        <div id="status" class="status">
+            Loading datasets...
+        </div>
+
+        <table id="datasetTable" style="display:none;">
+
+            <thead>
+                <tr>
+                    <th>Dataset</th>
+                    <th>Source</th>
+                    <th>Customers</th>
+                    <th>Predictions</th>
+                    <th>Explanations</th>
+                    <th>Created</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+
+            <tbody id="datasetBody"></tbody>
+
+        </table>
+
+    </div>
+
+</main>
+
+<script>
+
+async function loadDatasets() {
+
+    const status =
+        document.getElementById("status");
+
+    const table =
+        document.getElementById("datasetTable");
+
+    const body =
+        document.getElementById("datasetBody");
+
+    try {
+
+        const response =
+            await fetch("/datasets/history");
+
+        const data =
+            await response.json();
+
+        if (!data.success) {
+            throw new Error(
+                data.error || "Unable to load datasets."
+            );
+        }
+
+        if (!data.datasets || data.datasets.length === 0) {
+
+            status.textContent =
+                "No saved datasets found.";
+
+            return;
+        }
+
+        body.innerHTML = "";
+
+        data.datasets.forEach(dataset => {
+
+            const row =
+                document.createElement("tr");
+
+            const created =
+                dataset.created_at
+                    ? new Date(
+                        dataset.created_at
+                    ).toLocaleString()
+                    : "Unknown";
+
+            row.innerHTML = `
+                <td>
+                    <strong>
+                        ${escapeHtml(
+                            dataset.dataset_name || "Unnamed Dataset"
+                        )}
+                    </strong>
+                </td>
+
+                <td>
+                    <span class="source">
+                        ${escapeHtml(
+                            dataset.source_type || "Unknown"
+                        )}
+                    </span>
+                </td>
+
+                <td>
+                    ${dataset.customer_count || 0}
+                </td>
+
+                <td>
+                    ${dataset.prediction_count || 0}
+                </td>
+
+                <td>
+                    ${dataset.explanation_count || 0}
+                </td>
+
+                <td>
+                    ${created}
+                </td>
+
+                <td>
+                    <button
+                        class="select-button"
+                        onclick="selectDataset(${dataset.id})">
+                        Open
+                    </button>
+                </td>
+            `;
+
+            body.appendChild(row);
+        });
+
+        status.style.display = "none";
+        table.style.display = "table";
+
+    } catch (error) {
+
+        console.error(error);
+
+        status.className =
+            "status error";
+
+        status.textContent =
+            error.message;
+    }
+}
+
+
+function selectDataset(datasetId) {
+
+    if (!datasetId) {
+        return;
+    }
+
+    sessionStorage.setItem(
+        "selectedDatasetId",
+        String(datasetId)
+    );
+
+    window.location.href =
+        "/customers?dataset_id=" + datasetId;
+}
+
+
+function escapeHtml(value) {
+
+    return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+}
+
+
+loadDatasets();
+
+</script>
+
+<script src="/static/effects.js"></script>
+</body>
+</html>

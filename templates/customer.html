@@ -1,0 +1,3221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<title>Customer Analysis | RetainIQ</title>
+<style>
+/* =========================================================
+   RETAIN IQ — Customer Analysis (Dark Mode, reference match)
+   ========================================================= */
+:root{
+  --bg:#05070a;
+  --bg-2:#070a0f;
+  --card:#0c1017;
+  --card-2:#0e1319;
+  --line:#20242c;
+  --line-orange:rgba(255,138,42,.38);
+  --ink:#f4f6fb;
+  --muted:#8892a0;
+  --muted-2:#5f6875;
+  --orange:#ff6a2a;
+  --orange-2:#ff8b4d;
+  --red:#ef4c5c;
+  --red-soft:rgba(239,76,92,.14);
+  --green:#1fd48a;
+  --green-soft:rgba(31,212,138,.14);
+  --blue:#3b8dfa;
+  --blue-soft:rgba(59,141,250,.14);
+  --purple:#8b6bf0;
+  --purple-soft:rgba(139,107,240,.16);
+  --yellow:#f2b73c;
+  --radius:16px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{max-width:100%;overflow-x:hidden}
+img,svg,video,canvas{max-width:100%;height:auto}
+body{
+  font-family:"Inter","Segoe UI",Arial,sans-serif;
+  background:var(--bg);
+  color:var(--ink);
+  min-width:0;
+  position:relative;
+}
+
+/* ---- Ambient background: faint orange glows + diagonal lines ---- */
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  z-index:0;
+  pointer-events:none;
+  background:
+    radial-gradient(ellipse 980px 680px at 4% 92%, rgba(255,106,0,.18), transparent 61%),
+    radial-gradient(ellipse 820px 560px at 98% 5%, rgba(255,118,20,.13), transparent 60%),
+    radial-gradient(ellipse 1150px 760px at 52% -12%, rgba(255,138,42,.07), transparent 58%),
+    linear-gradient(128deg, transparent 0 19%, rgba(255,106,0,.07) 19.15%, transparent 19.35% 46%, rgba(255,138,42,.045) 46.15%, transparent 46.35% 73%, rgba(255,106,0,.055) 73.15%, transparent 73.35%),
+    repeating-linear-gradient(152deg, transparent 0 92px, rgba(255,106,0,.045) 92px 93px, transparent 93px 184px);
+}
+body::after{
+  content:"";
+  position:fixed;
+  inset:0;
+  z-index:0;
+  pointer-events:none;
+  opacity:.78;
+  background:
+    linear-gradient(18deg, transparent 0 22%, rgba(255,138,42,.10) 22.12%, transparent 22.30%),
+    linear-gradient(158deg, transparent 0 37%, rgba(255,106,0,.08) 37.10%, transparent 37.28%),
+    linear-gradient(72deg, transparent 0 64%, rgba(255,138,42,.065) 64.12%, transparent 64.30%),
+    repeating-linear-gradient(58deg,
+      rgba(255,120,30,.085) 0px,
+      rgba(255,120,30,.085) 1px,
+      transparent 1px,
+      transparent 46px),
+    radial-gradient(circle at 7% 83%, rgba(255,138,42,.34) 0 2px, transparent 2.8px),
+    radial-gradient(circle at 17% 71%, rgba(255,106,0,.26) 0 1.5px, transparent 2.4px),
+    radial-gradient(circle at 88% 18%, rgba(255,138,42,.28) 0 2px, transparent 2.8px),
+    radial-gradient(circle at 77% 31%, rgba(255,106,0,.22) 0 1.5px, transparent 2.4px);
+}
+
+
+/* ---- Enhanced orange technical background / glass atmosphere ---- */
+body{
+  background:
+    radial-gradient(900px 520px at 4% 90%, rgba(255,106,42,.16), transparent 68%),
+    radial-gradient(760px 520px at 96% 8%, rgba(255,139,77,.11), transparent 68%),
+    radial-gradient(560px 420px at 54% 42%, rgba(255,106,42,.045), transparent 72%),
+    var(--bg);
+}
+body::before{
+  background:
+    radial-gradient(circle at 9% 82%, rgba(255,106,42,.34) 0 1.5px, transparent 2.8px),
+    radial-gradient(circle at 17% 68%, rgba(255,139,77,.25) 0 1px, transparent 2.4px),
+    radial-gradient(circle at 89% 19%, rgba(255,106,42,.28) 0 1.5px, transparent 2.8px),
+    radial-gradient(circle at 76% 34%, rgba(255,139,77,.20) 0 1px, transparent 2.4px),
+    radial-gradient(ellipse 900px 620px at 5% 92%, rgba(255,106,42,.14), transparent 64%),
+    radial-gradient(ellipse 720px 500px at 96% 7%, rgba(255,139,77,.09), transparent 64%);
+}
+body::after{
+  opacity:.82;
+  background:
+    radial-gradient(ellipse 720px 360px at 12% 76%, transparent 63%, rgba(255,106,42,.075) 63.15%, rgba(255,106,42,.075) 63.35%, transparent 63.5%),
+    radial-gradient(ellipse 840px 430px at 10% 79%, transparent 66%, rgba(255,139,77,.055) 66.15%, rgba(255,139,77,.055) 66.32%, transparent 66.48%),
+    radial-gradient(ellipse 900px 430px at 94% 20%, transparent 67%, rgba(255,106,42,.065) 67.15%, rgba(255,106,42,.065) 67.34%, transparent 67.5%),
+    radial-gradient(ellipse 1050px 520px at 90% 15%, transparent 70%, rgba(255,139,77,.045) 70.15%, rgba(255,139,77,.045) 70.32%, transparent 70.48%),
+    linear-gradient(118deg, transparent 0 17%, rgba(255,106,42,.07) 17.12%, transparent 17.30% 51%, rgba(255,139,77,.055) 51.12%, transparent 51.30% 83%, rgba(255,106,42,.065) 83.12%, transparent 83.30%),
+    linear-gradient(26deg, transparent 0 27%, rgba(255,139,77,.045) 27.12%, transparent 27.30% 69%, rgba(255,106,42,.055) 69.12%, transparent 69.30%),
+    radial-gradient(circle at 12% 76%, rgba(255,106,42,.38) 0 2px, transparent 3px),
+    radial-gradient(circle at 89% 20%, rgba(255,139,77,.30) 0 2px, transparent 3px);
+}
+
+/* ---- Glassmorphism cards ---- */
+.card{
+  background:
+    linear-gradient(145deg, rgba(255,255,255,.055), rgba(255,255,255,.012) 45%, rgba(255,106,42,.018)),
+    rgba(12,16,23,.72);
+  border:1px solid rgba(255,255,255,.085);
+  box-shadow:
+    0 18px 45px rgba(0,0,0,.25),
+    0 2px 10px rgba(0,0,0,.20),
+    inset 0 1px 0 rgba(255,255,255,.055),
+    inset 0 -1px 0 rgba(255,106,42,.035);
+  -webkit-backdrop-filter:blur(18px) saturate(125%);
+          backdrop-filter:blur(18px) saturate(125%);
+  position:relative;
+  overflow:hidden;
+  transition:transform .28s cubic-bezier(.2,.75,.25,1),border-color .28s ease,box-shadow .28s ease;
+}
+.card::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  background:
+    linear-gradient(115deg, rgba(255,255,255,.075), transparent 20%, transparent 75%, rgba(255,106,42,.035)),
+    linear-gradient(180deg, rgba(255,255,255,.025), transparent 32%);
+  opacity:.8;
+}
+.card::after{
+  content:"";
+  position:absolute;
+  width:180px;height:180px;
+  right:-110px;top:-115px;
+  border-radius:50%;
+  border:1px solid rgba(255,106,42,.075);
+  box-shadow:0 0 55px rgba(255,106,42,.045);
+  pointer-events:none;
+  transition:transform .35s ease,opacity .35s ease;
+}
+.card:hover{
+  transform:translateY(-4px);
+  border-color:rgba(255,106,42,.30);
+  box-shadow:
+    0 24px 55px rgba(0,0,0,.34),
+    0 0 0 1px rgba(255,106,42,.055),
+    0 0 32px rgba(255,106,42,.065),
+    inset 0 1px 0 rgba(255,255,255,.075);
+}
+.card:hover::after{transform:scale(1.22);opacity:.9}
+.card > *{position:relative;z-index:1}
+
+.risk-card,.recommend-card,.factor-card,.profile-card{
+  background:
+    linear-gradient(145deg, rgba(255,255,255,.06), rgba(255,255,255,.012) 50%, rgba(255,106,42,.022)),
+    rgba(12,16,23,.70);
+}
+
+/* ---- Refined RetainIQ logo ---- */
+.brand-mark{
+  width:34px;height:34px;border-radius:10px;
+  display:grid;place-items:center;position:relative;overflow:hidden;
+  background:linear-gradient(145deg,rgba(255,106,42,.18),rgba(255,139,77,.055)),rgba(255,255,255,.025);
+  border:1px solid rgba(255,106,42,.30);
+  box-shadow:0 0 20px rgba(255,106,42,.10),inset 0 1px 0 rgba(255,255,255,.08);
+}
+.brand-mark::before{
+  content:"";position:absolute;width:18px;height:18px;
+  border:2px solid var(--orange);border-left-color:transparent;border-radius:50%;
+  transform:rotate(-35deg);filter:drop-shadow(0 0 5px rgba(255,106,42,.35));
+}
+.brand-mark::after{
+  content:"";position:absolute;width:9px;height:2px;border-radius:2px;
+  background:var(--orange-2);transform:rotate(-35deg) translate(1px,-1px);
+  box-shadow:0 0 7px rgba(255,106,42,.45);
+}
+.brand-mark svg{
+  width:19px;height:19px;position:relative;z-index:2;
+  stroke:var(--orange);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;
+}
+.brand-mark .brand-dot{fill:var(--orange-2);stroke:none}
+
+/* Light mode keeps the glass treatment. */
+html.light-mode .card{
+  background:linear-gradient(145deg,rgba(255,255,255,.78),rgba(255,255,255,.50) 48%,rgba(255,106,42,.035)),rgba(255,255,255,.64);
+  border-color:rgba(25,34,46,.10);
+  box-shadow:0 18px 42px rgba(31,41,55,.10),0 2px 8px rgba(31,41,55,.06),inset 0 1px 0 rgba(255,255,255,.82);
+  -webkit-backdrop-filter:blur(18px) saturate(120%);backdrop-filter:blur(18px) saturate(120%);
+}
+html.light-mode .card:hover{
+  border-color:rgba(255,106,42,.32);
+  box-shadow:0 24px 50px rgba(31,41,55,.14),0 0 28px rgba(255,106,42,.08),inset 0 1px 0 rgba(255,255,255,.9);
+}
+
+
+/* ---- Final glass tuning: lighter card opacity / stronger background visibility ---- */
+.card{
+  background:
+    linear-gradient(145deg, rgba(255,255,255,.035), rgba(255,255,255,.006) 48%, rgba(255,106,42,.012)),
+    rgba(12,16,23,.52);
+  border-color:rgba(255,255,255,.065);
+  box-shadow:
+    0 16px 38px rgba(0,0,0,.20),
+    0 2px 8px rgba(0,0,0,.14),
+    inset 0 1px 0 rgba(255,255,255,.045);
+  -webkit-backdrop-filter:blur(12px) saturate(115%);
+          backdrop-filter:blur(12px) saturate(115%);
+}
+.risk-card,.recommend-card,.factor-card,.profile-card{
+  background:
+    linear-gradient(145deg, rgba(255,255,255,.04), rgba(255,255,255,.006) 50%, rgba(255,106,42,.014)),
+    rgba(12,16,23,.50);
+}
+.card:hover{
+  background:
+    linear-gradient(145deg, rgba(255,255,255,.055), rgba(255,255,255,.008) 48%, rgba(255,106,42,.018)),
+    rgba(12,16,23,.58);
+}
+html.light-mode .card{
+  background:
+    linear-gradient(145deg, rgba(255,255,255,.58), rgba(255,255,255,.28) 50%, rgba(255,106,42,.022)),
+    rgba(255,255,255,.42);
+  -webkit-backdrop-filter:blur(12px) saturate(112%);
+          backdrop-filter:blur(12px) saturate(112%);
+}
+html.light-mode .risk-card,
+html.light-mode .recommend-card,
+html.light-mode .factor-card,
+html.light-mode .profile-card{
+  background:
+    linear-gradient(145deg, rgba(255,255,255,.62), rgba(255,255,255,.30) 50%, rgba(255,106,42,.025)),
+    rgba(255,255,255,.44);
+}
+
+/* ---- Animated organic shape field: no grid / no linework ---- */
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  z-index:0;
+  pointer-events:none;
+  background:
+    radial-gradient(ellipse 620px 420px at 5% 88%, rgba(255,106,42,.13), transparent 68%),
+    radial-gradient(ellipse 520px 360px at 96% 8%, rgba(255,139,77,.09), transparent 70%);
+}
+body::after{
+  content:"";
+  position:fixed;
+  inset:0;
+  z-index:0;
+  pointer-events:none;
+  opacity:1;
+  background:none;
+}
+
+/* Floating shapes are injected as a dedicated decorative layer. */
+.animated-shapes{
+  position:fixed;
+  inset:0;
+  z-index:0;
+  pointer-events:none;
+  overflow:hidden;
+}
+.animated-shapes .shape{
+  position:absolute;
+  display:block;
+  border:1px solid rgba(255,106,42,.22);
+  background:rgba(255,106,42,.025);
+  box-shadow:
+    0 0 24px rgba(255,106,42,.055),
+    inset 0 0 18px rgba(255,139,77,.025);
+  will-change:transform;
+}
+.animated-shapes .circle{border-radius:50%}
+.animated-shapes .ring{
+  border-radius:50%;
+  background:transparent;
+  border-color:rgba(255,139,77,.18);
+}
+.animated-shapes .diamond{
+  transform:rotate(45deg);
+  border-radius:5px;
+}
+.animated-shapes .hex{
+  border-radius:28% 72% 40% 60% / 60% 40% 60% 40%;
+}
+.animated-shapes .dot{
+  width:6px!important;height:6px!important;
+  border:0;
+  border-radius:50%;
+  background:rgba(255,139,77,.48);
+  box-shadow:0 0 14px rgba(255,106,42,.30);
+}
+.shape.s1{width:92px;height:92px;left:8%;top:22%;animation:floatShape1 13s ease-in-out infinite}
+.shape.s2{width:150px;height:150px;right:6%;top:15%;animation:floatShape2 17s ease-in-out infinite}
+.shape.s3{width:62px;height:62px;left:27%;bottom:10%;animation:floatShape3 11s ease-in-out infinite}
+.shape.s4{width:210px;height:210px;right:20%;bottom:-75px;animation:floatShape4 19s ease-in-out infinite}
+.shape.s5{width:38px;height:38px;left:52%;top:19%;animation:floatShape5 9s ease-in-out infinite}
+.shape.s6{width:78px;height:78px;right:37%;top:68%;animation:floatShape6 14s ease-in-out infinite}
+.shape.s7{width:7px;height:7px;left:15%;top:52%;animation:floatDot1 7s ease-in-out infinite}
+.shape.s8{width:5px;height:5px;right:13%;top:58%;animation:floatDot2 8s ease-in-out infinite}
+.shape.s9{width:8px;height:8px;left:72%;top:28%;animation:floatDot3 10s ease-in-out infinite}
+.shape.s10{width:4px;height:4px;left:43%;bottom:22%;animation:floatDot4 6s ease-in-out infinite}
+
+@keyframes floatShape1{
+  0%,100%{transform:translate3d(0,0,0) rotate(0deg)}
+  50%{transform:translate3d(24px,-18px,0) rotate(28deg)}
+}
+@keyframes floatShape2{
+  0%,100%{transform:translate3d(0,0,0) rotate(45deg)}
+  50%{transform:translate3d(-30px,26px,0) rotate(72deg)}
+}
+@keyframes floatShape3{
+  0%,100%{transform:translate3d(0,0,0) rotate(45deg) scale(1)}
+  50%{transform:translate3d(-18px,-24px,0) rotate(125deg) scale(1.12)}
+}
+@keyframes floatShape4{
+  0%,100%{transform:translate3d(0,0,0) rotate(0deg)}
+  50%{transform:translate3d(-28px,-40px,0) rotate(22deg)}
+}
+@keyframes floatShape5{
+  0%,100%{transform:translate3d(0,0,0) rotate(0deg)}
+  50%{transform:translate3d(18px,24px,0) rotate(180deg)}
+}
+@keyframes floatShape6{
+  0%,100%{transform:translate3d(0,0,0) rotate(0deg)}
+  50%{transform:translate3d(26px,-20px,0) rotate(-30deg)}
+}
+@keyframes floatDot1{
+  0%,100%{transform:translate(0,0);opacity:.35}
+  50%{transform:translate(30px,-35px);opacity:.85}
+}
+@keyframes floatDot2{
+  0%,100%{transform:translate(0,0);opacity:.25}
+  50%{transform:translate(-24px,28px);opacity:.75}
+}
+@keyframes floatDot3{
+  0%,100%{transform:translate(0,0);opacity:.30}
+  50%{transform:translate(18px,34px);opacity:.8}
+}
+@keyframes floatDot4{
+  0%,100%{transform:translate(0,0);opacity:.25}
+  50%{transform:translate(-20px,-24px);opacity:.7}
+}
+@media (prefers-reduced-motion:reduce){
+  .animated-shapes .shape{animation:none!important}
+}
+
+/* Light mode shape treatment */
+html.light-mode .animated-shapes .shape{
+  border-color:rgba(255,106,42,.16);
+  background:rgba(255,106,42,.018);
+  box-shadow:0 0 22px rgba(255,106,42,.035),inset 0 0 14px rgba(255,139,77,.018);
+}
+html.light-mode .animated-shapes .ring{border-color:rgba(255,106,42,.14)}
+html.light-mode .animated-shapes .dot{background:rgba(255,106,42,.38)}
+
+
+/* ---- Glass visibility refinement ---- */
+.card{
+  background:
+    linear-gradient(135deg, rgba(255,255,255,.042), rgba(255,255,255,.008) 45%, rgba(255,106,42,.012)),
+    rgba(8,11,16,.42);
+  border-color:rgba(255,255,255,.075);
+  box-shadow:
+    0 16px 38px rgba(0,0,0,.18),
+    inset 0 1px 0 rgba(255,255,255,.065),
+    inset 0 -1px 0 rgba(255,106,42,.025);
+  -webkit-backdrop-filter:blur(10px) saturate(118%);
+          backdrop-filter:blur(10px) saturate(118%);
+}
+.risk-card,.recommend-card,.factor-card,.profile-card{
+  background:
+    linear-gradient(135deg, rgba(255,255,255,.045), rgba(255,255,255,.007) 48%, rgba(255,106,42,.014)),
+    rgba(8,11,16,.40);
+}
+.card:hover{
+  background:
+    linear-gradient(135deg, rgba(255,255,255,.055), rgba(255,255,255,.010) 46%, rgba(255,106,42,.022)),
+    rgba(8,11,16,.46);
+}
+
+/* ---- Factor-specific semantic hover states ---- */
+.risk-factors-card:hover,
+.risk-factor-card:hover,
+.factor-card.risk:hover{
+  border-color:rgba(239,76,92,.38);
+  background:
+    linear-gradient(135deg, rgba(239,76,92,.105), rgba(255,255,255,.012) 48%, rgba(239,76,92,.055)),
+    rgba(20,10,14,.42);
+  box-shadow:
+    0 22px 48px rgba(0,0,0,.27),
+    0 0 30px rgba(239,76,92,.105),
+    inset 0 1px 0 rgba(255,125,137,.09),
+    inset 0 -1px 0 rgba(239,76,92,.10);
+}
+.protective-factors-card:hover,
+.protective-factor-card:hover,
+.factor-card.protective:hover{
+  border-color:rgba(31,212,138,.38);
+  background:
+    linear-gradient(135deg, rgba(31,212,138,.095), rgba(255,255,255,.012) 48%, rgba(31,212,138,.045)),
+    rgba(7,19,15,.40);
+  box-shadow:
+    0 22px 48px rgba(0,0,0,.27),
+    0 0 30px rgba(31,212,138,.095),
+    inset 0 1px 0 rgba(112,255,191,.09),
+    inset 0 -1px 0 rgba(31,212,138,.09);
+}
+
+/* The actual two factor cards in this page use these classes. */
+.risk-card .factor-card:hover{
+  border-color:rgba(239,76,92,.38);
+}
+.protective-card:hover{
+  border-color:rgba(31,212,138,.38);
+}
+
+/* Glass highlight sweeps subtly with hover. */
+.card::before{
+  background:
+    linear-gradient(120deg, rgba(255,255,255,.065), transparent 22%, transparent 70%, rgba(255,106,42,.025)),
+    radial-gradient(circle at 0% 0%, rgba(255,255,255,.045), transparent 30%);
+  opacity:.72;
+  transition:opacity .3s ease,transform .45s ease;
+}
+.card:hover::before{
+  opacity:1;
+  transform:translate3d(5px,2px,0);
+}
+
+/* Light mode remains transparent enough to expose the animated shapes. */
+html.light-mode .card{
+  background:
+    linear-gradient(135deg, rgba(255,255,255,.54), rgba(255,255,255,.22) 48%, rgba(255,106,42,.018)),
+    rgba(255,255,255,.34);
+  border-color:rgba(30,40,52,.09);
+  box-shadow:
+    0 16px 36px rgba(31,41,55,.08),
+    inset 0 1px 0 rgba(255,255,255,.82);
+  -webkit-backdrop-filter:blur(10px) saturate(115%);
+          backdrop-filter:blur(10px) saturate(115%);
+}
+html.light-mode .risk-card,.light-mode .recommend-card,.light-mode .factor-card,.light-mode .profile-card{
+  background:
+    linear-gradient(135deg, rgba(255,255,255,.58), rgba(255,255,255,.24) 48%, rgba(255,106,42,.018)),
+    rgba(255,255,255,.36);
+}
+html.light-mode .risk-factor-card:hover,.light-mode .risk-factors-card:hover{
+  background:
+    linear-gradient(135deg, rgba(239,76,92,.07), rgba(255,255,255,.25)),
+    rgba(255,255,255,.34);
+}
+html.light-mode .protective-factor-card:hover,.light-mode .protective-factors-card:hover{
+  background:
+    linear-gradient(135deg, rgba(31,212,138,.07), rgba(255,255,255,.25)),
+    rgba(255,255,255,.34);
+}
+
+/* ================= Sidebar ================= */
+header{
+  position:fixed;
+  inset:0 auto 0 0;
+  z-index:50;
+  width:196px;
+  height:100vh;
+  padding:22px 12px;
+  background:#060809;
+  border-right:1px solid #16191f;
+  display:flex;
+  flex-direction:column;
+}
+.logo{
+  display:flex;
+  align-items:center;
+  gap:9px;
+  padding:2px 8px 26px;
+  font-size:17px;
+  font-weight:800;
+  letter-spacing:-.02em;
+  color:#fff;
+}
+.logo .logo-mark{
+  width:30px;height:30px;flex:0 0 30px;
+  border-radius:8px;
+  display:grid;place-items:center;
+  background:linear-gradient(135deg,#ffb84d,#ff6a00);
+  box-shadow:0 4px 12px rgba(255,106,0,.30);
+}
+.logo .logo-mark svg{width:17px;height:17px;stroke:#0b0700;stroke-width:2.6;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.logo b{color:var(--orange)}
+.side-nav{display:flex;flex-direction:column;gap:5px}
+.sidebar-back{
+  margin-top:auto;
+  padding-top:16px;
+}
+.side-nav a{
+  display:flex;align-items:center;gap:11px;
+  min-height:42px;padding:0 12px;border-radius:9px;
+  color:#8894a4;text-decoration:none;
+  font-size:13.5px;font-weight:600;
+  transition:background .18s ease,color .18s ease;
+}
+.side-nav a svg{width:18px;height:18px;flex:0 0 18px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.side-nav a:hover{color:#d7dee7;background:#11151c}
+.side-nav a{transition:background .2s ease,color .2s ease,border-color .2s ease,transform .2s ease}
+.side-nav a:hover{transform:translateX(2px);background:rgba(255,106,42,.055);border-color:rgba(255,106,42,.10)}
+.side-nav a.active{color:var(--orange);background:rgba(255,138,42,.13)}
+
+/* ================= Main canvas ================= */
+.container{
+  max-width:none;
+  margin-left:196px;
+  padding:26px clamp(20px,3vw,44px) 50px;
+  position:relative;
+  z-index:1;
+}
+
+/* top bar: back button + customer id / date / avatar */
+.top-bar{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:16px;
+  flex-wrap:wrap;
+  margin-bottom:14px;
+}
+.back-button{
+  border:1px solid var(--line);
+  background:#0b0e13;
+  color:#c4cbd6;
+  font-weight:600;
+  font-size:13px;
+  padding:9px 16px;
+  border-radius:9px;
+  cursor:pointer;
+  display:inline-flex;align-items:center;gap:8px;
+  transition:border-color .18s ease,color .18s ease;
+}
+.back-button:hover{color:var(--orange);border-color:var(--line-orange)}
+
+.identity-bar{
+  display:flex;align-items:center;gap:0;
+  background:#0b0e13;
+  border:1px solid var(--line);
+  border-radius:12px;
+  overflow:hidden;
+}
+.identity-chip{
+  display:flex;align-items:center;gap:9px;
+  padding:9px 16px;
+  white-space:nowrap;
+}
+.identity-chip + .identity-chip{border-left:1px solid var(--line)}
+.identity-chip .id-icon{width:28px;height:28px;flex:0 0 28px;border-radius:7px;display:grid;place-items:center;background:#151a22;color:#7c8798}
+.identity-chip .id-icon svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.identity-chip .id-copy{width:28px;height:28px;flex:0 0 28px;border-radius:7px;display:grid;place-items:center;background:transparent;color:#5f6875;cursor:pointer;border:0}
+.identity-chip .id-copy svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2}
+.id-copy-txt{display:flex;flex-direction:column;gap:2px}
+.id-label{font-size:10px;color:var(--muted-2);font-weight:600;text-transform:none}
+.id-value{font-size:13px;color:#fff;font-weight:800;letter-spacing:-.01em}
+.avatar-chip{display:flex;align-items:center;gap:9px;padding:7px 14px 7px 12px}
+.avatar-circle{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(145deg,#7a4a2c,#5c3620);color:#ffd9b0;font-weight:800;font-size:13px;border:1px solid rgba(255,255,255,.06)}
+.avatar-name{font-size:13.5px;font-weight:700;color:#eef1f5}
+.avatar-chip svg{width:14px;height:14px;stroke:#8892a0;stroke-width:2;fill:none;margin-left:2px}
+.profile-menu-wrap{position:relative}
+.profile-trigger{border:0;background:transparent;cursor:pointer;color:inherit}
+.profile-trigger:focus-visible{outline:2px solid var(--orange);outline-offset:2px;border-radius:10px}
+.profile-menu{
+  position:absolute;right:0;top:calc(100% + 9px);width:190px;
+  padding:8px;border-radius:12px;background:#0b0f15;
+  border:1px solid rgba(255,138,42,.28);
+  box-shadow:0 18px 45px rgba(0,0,0,.45),0 0 30px rgba(255,106,0,.08);
+  opacity:0;visibility:hidden;transform:translateY(-6px) scale(.98);
+  transform-origin:top right;transition:opacity .18s ease,transform .18s ease,visibility .18s ease;
+  z-index:80;
+}
+.profile-menu.open{opacity:1;visibility:visible;transform:translateY(0) scale(1)}
+.profile-menu-user{display:flex;align-items:center;gap:10px;padding:8px 8px 10px;border-bottom:1px solid #20242c}
+.profile-menu-user .avatar-circle{width:30px;height:30px;flex:0 0 30px}
+.profile-menu-user strong{display:block;color:#f2f5f8;font-size:12.5px}
+.profile-menu-user span{display:block;margin-top:2px;color:#727d8c;font-size:10.5px}
+.logout-button{
+  width:100%;margin-top:7px;padding:9px 10px;border:0;border-radius:8px;
+  display:flex;align-items:center;gap:9px;text-align:left;cursor:pointer;
+  background:transparent;color:#c9d0d9;font-size:12px;font-weight:700;
+  transition:background .16s ease,color .16s ease;
+}
+.logout-button:hover{background:rgba(239,76,92,.10);color:#ff6a78}
+.logout-button svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+/* page title */
+.page-title{margin-bottom:22px}
+.page-title h1{font-size:clamp(26px,3vw,34px);letter-spacing:-.03em;font-weight:800;margin-bottom:6px;color:#fff}
+.page-title h1 b{color:var(--orange);font-weight:800}
+.page-title p{color:var(--muted);font-size:13.5px}
+
+/* ================= Card shell ================= */
+.grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;margin-bottom:16px}
+.card{
+  position:relative;
+  overflow:hidden;
+  background:linear-gradient(150deg,var(--card-2) 0%,var(--card) 100%);
+  border:1px solid var(--line-orange);
+  border-radius:var(--radius);
+  padding:22px 22px 20px;
+  box-shadow:0 14px 32px rgba(0,0,0,.35);
+  min-width:0;
+}
+.card-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px;flex-wrap:wrap}
+.card-head h2{font-size:17px;font-weight:750;letter-spacing:-.02em;color:#fff;display:flex;align-items:center;gap:8px}
+.info-dot{
+  width:15px;height:15px;border-radius:50%;
+  border:1.5px solid #6b7686;color:#8592a3;
+  display:grid;place-items:center;font-size:9px;font-weight:800;font-family:Georgia,serif;
+  cursor:default;
+}
+.badge-soft{
+  padding:6px 11px;border-radius:8px;background:#12161d;border:1px solid #232833;
+  color:#8b96a5;font-size:11px;font-weight:650;white-space:nowrap;
+}
+
+/* ================= Risk Score card ================= */
+.risk-main{display:grid;grid-template-columns:minmax(0,1.15fr) 190px;align-items:center;gap:14px}
+.risk-gauge{
+  position:relative;width:100%;max-width:320px;margin:0 auto;isolation:isolate;
+  filter:drop-shadow(0 14px 28px rgba(255,106,0,.08));
+}
+.gauge-halo{fill:none;stroke-linecap:round;opacity:.13;filter:blur(1px)}
+.gauge-inner{opacity:.75}
+.gauge-ticks path{stroke:#3b4654;stroke-width:1.4;stroke-linecap:round;fill:none;opacity:.9}
+.gauge-ticks .gauge-end-tick{stroke:#65707e;stroke-width:1.8}
+.gauge-labels text{
+  fill:#697584;font-size:8px;font-weight:700;font-family:Inter,"Segoe UI",Arial,sans-serif;
+}
+.risk-card::after{
+  content:"";
+  position:absolute;
+  width:220px;height:220px;
+  right:-95px;top:-105px;
+  border-radius:50%;
+  border:1px solid rgba(255,138,42,.10);
+  box-shadow:0 0 0 18px rgba(255,138,42,.018),0 0 70px rgba(255,106,0,.08);
+  pointer-events:none;
+}
+.risk-gauge svg{width:100%;height:auto;display:block;overflow:visible}
+.gauge-track{fill:none;stroke-linecap:round}
+.gauge-tick{stroke:#26303c;stroke-width:1.6}
+
+.risk-center{position:absolute;left:50%;top:64%;transform:translate(-50%,-50%);text-align:center;z-index:5;pointer-events:none;white-space:nowrap}
+.risk-score{font-size:clamp(34px,4vw,42px);font-weight:850;letter-spacing:-.04em;color:#fff;line-height:1}
+.risk-score-sub{margin-top:5px;color:var(--muted);font-size:12px;font-weight:600}
+.risk-label{
+  display:inline-block;margin:12px auto 0;padding:6px 16px;border-radius:20px;
+  font-size:11.5px;font-weight:800;text-align:center;
+}
+.risk-label.high{background:rgba(239,76,92,.16);color:#ff6a78;border:1px solid rgba(239,76,92,.35)}
+.risk-label.medium{background:rgba(242,183,60,.16);color:#ffc861;border:1px solid rgba(242,183,60,.35)}
+.risk-label.low{background:rgba(31,212,138,.16);color:#3be3a6;border:1px solid rgba(31,212,138,.35)}
+.risk-gauge-wrap{display:flex;flex-direction:column;align-items:center}
+
+.risk-legend{
+  border:1px solid var(--line);border-radius:12px;background:#0a0d12;
+  padding:14px;display:flex;flex-direction:column;gap:12px;
+}
+.risk-legend-title{font-size:12.5px;font-weight:750;color:#c3cbd6;margin-bottom:2px}
+.risk-legend span{display:grid;grid-template-columns:10px 1fr auto;align-items:center;column-gap:9px;font-size:12px}
+.risk-legend span i{width:9px;height:9px;border-radius:3px;display:block}
+.risk-legend span:nth-of-type(2) i{background:#22c55e}
+.risk-legend span:nth-of-type(3) i{background:#f2b73c}
+.risk-legend span:nth-of-type(4) i{background:#ff8a3d}
+.risk-legend span:nth-of-type(5) i{background:#ef4c5c}
+.risk-legend label{color:#c3cbd6;font-weight:600}
+.risk-legend b{color:#7c8798;font-weight:650;font-size:11px;white-space:nowrap}
+
+.risk-bottom-line{
+  display:flex;align-items:flex-start;gap:12px;margin-top:16px;
+  padding:13px 15px;border-radius:11px;
+  background:linear-gradient(120deg,rgba(239,76,92,.16),rgba(120,20,30,.16));
+  border:1px solid rgba(239,76,92,.4);
+}
+.risk-bottom-icon{width:26px;height:26px;flex:0 0 26px;border-radius:50%;background:rgba(239,76,92,.22);display:grid;place-items:center;color:#ff6a78}
+.risk-bottom-icon svg{width:15px;height:15px}
+.risk-bottom-copy strong{display:block;font-size:13px;color:#ff8a92;font-weight:750;line-height:1.35}
+.risk-bottom-copy span{display:block;margin-top:3px;color:#b7bfc9;font-size:12px;line-height:1.4}
+
+/* ================= Recommendation card ================= */
+.suggestion-icon{width:22px;height:22px;flex:0 0 22px;color:var(--orange)}
+.suggestion-icon svg{width:100%;height:100%;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+.retention-action{
+  padding:17px 18px 16px;border-radius:13px;
+  background:linear-gradient(145deg,rgba(139,107,240,.16),rgba(30,26,50,.5));
+  border:1px solid rgba(139,107,240,.34);
+  margin-bottom:18px;
+}
+.service-recovery-layout{display:grid;grid-template-columns:50px minmax(0,1fr);gap:13px;align-items:start}
+.service-icon{
+  width:50px;height:50px;border-radius:13px;display:grid;place-items:center;
+  background:linear-gradient(145deg,#6c4be8,#4d33b8);
+  color:#fff;box-shadow:0 8px 18px rgba(109,75,232,.32);
+}
+.service-icon svg{width:26px;height:26px;stroke:currentColor;fill:none;stroke-width:2.3;stroke-linecap:round;stroke-linejoin:round}
+.service-heading{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:7px}
+.action-name{font-size:16px;font-weight:750;color:#fff;letter-spacing:-.01em}
+.priority{display:inline-flex;align-items:center;padding:5px 11px;border-radius:14px;font-size:9.5px;font-weight:800;white-space:nowrap}
+.priority-immediate{background:rgba(239,76,92,.18);color:#ff6a78;border:1px solid rgba(239,76,92,.4)}
+.priority-high{background:rgba(242,183,60,.18);color:#ffc861;border:1px solid rgba(242,183,60,.4)}
+.priority-medium{background:rgba(59,141,250,.18);color:#78b0ff;border:1px solid rgba(59,141,250,.4)}
+.priority-low{background:rgba(31,212,138,.18);color:#3be3a6;border:1px solid rgba(31,212,138,.4)}
+.service-copy{color:#b9c1cc;font-size:12.5px;line-height:1.55}
+.service-copy strong{color:#e6eaf0;font-weight:700}
+#actionReason,#actionRecommendation{font-size:12.5px;line-height:1.55;color:#b9c1cc}
+.action-cta{
+  display:inline-flex;align-items:center;gap:7px;
+  margin-top:12px;padding:9px 16px;border:0;border-radius:9px;cursor:pointer;
+  background:linear-gradient(135deg,#ff9a3d,#ff6a00);
+  color:#1a0d00;font-size:12px;font-weight:800;
+  box-shadow:0 8px 18px rgba(255,106,0,.28);
+  transition:transform .18s ease,box-shadow .18s ease;
+}
+.action-cta:hover{transform:translateY(-1px);box-shadow:0 10px 22px rgba(255,106,0,.36)}
+.action-cta svg{width:14px;height:14px;stroke:currentColor;stroke-width:2.6}
+#recommendation{
+  padding:14px 15px;border-radius:11px;background:#0a0d12;border:1px solid var(--line);
+  color:#b9c1cc;font-size:12.5px;line-height:1.5;
+}
+
+.other-actions h3{font-size:12.5px;font-weight:700;color:#c9cfd8;margin-bottom:9px;letter-spacing:.01em}
+.other-action{
+  display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:10px;
+  min-height:44px;padding:8px 12px;margin-top:7px;
+  border:1px solid var(--line);border-radius:10px;background:#0a0d12;
+  color:#d3d9e1;font-size:12.5px;
+}
+.other-action .action-label-wrap{display:flex;align-items:center;gap:10px;min-width:0}
+.action-list-icon{width:30px;height:30px;flex:0 0 30px;border-radius:8px;display:grid;place-items:center;background:rgba(255,138,42,.16);color:var(--orange)}
+.action-list-icon.blue{background:var(--blue-soft);color:var(--blue)}
+.action-list-icon.green{background:var(--green-soft);color:var(--green)}
+.action-list-icon.red{background:var(--red-soft);color:var(--red)}
+.action-list-icon svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.other-action b{justify-self:end;padding:6px 12px;border-radius:14px;font-size:10px;font-weight:800;white-space:nowrap}
+.pill-green{background:rgba(31,212,138,.16);color:#3be3a6;border:1px solid rgba(31,212,138,.35)}
+.pill-blue{background:rgba(59,141,250,.16);color:#78b0ff;border:1px solid rgba(59,141,250,.35)}
+.pill-red{background:rgba(239,76,92,.16);color:#ff6a78;border:1px solid rgba(239,76,92,.35)}
+
+/* ================= Factor cards ================= */
+.factor-card .card-head{margin-bottom:16px}
+.factor-title-wrap{display:flex;align-items:center;gap:10px}
+.factor-heading-icon{width:32px;height:32px;flex:0 0 32px;border-radius:9px;display:grid;place-items:center}
+.factor-heading-icon svg{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.factor-heading-icon.risk{background:var(--red-soft);color:var(--red)}
+.factor-heading-icon.protective{background:var(--green-soft);color:var(--green)}
+
+.factor-list{display:flex;flex-direction:column;gap:10px}
+.factor-row{display:grid;grid-template-columns:34px minmax(110px,1.05fr) minmax(95px,1.3fr) 58px;align-items:center;column-gap:11px;min-height:36px}
+.factor-icon{width:34px;height:34px;flex:0 0 34px;border-radius:9px;display:grid;place-items:center;background:var(--red-soft);color:var(--red)}
+.factor-icon.green{background:var(--green-soft);color:var(--green)}
+.factor-icon svg{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:2.1;stroke-linecap:round;stroke-linejoin:round}
+.factor-name{min-width:0;color:#e5e9ef;font-size:13px;font-weight:600;line-height:1.25}
+.factor-name small{display:block;margin-top:2px;color:var(--muted-2);font-size:11px;font-weight:500}
+.factor-bar{height:9px;min-width:0;border-radius:999px;background:#171b22;overflow:hidden}
+.factor-fill{height:100%;min-width:4px;border-radius:999px;transition:width .9s cubic-bezier(.18,.75,.2,1)}
+.factor-fill.positive{background:linear-gradient(90deg,#ef4c5c,#ff7a4d)}
+.factor-fill.positive.orange{background:linear-gradient(90deg,#ff9a3d,#ffbf3d)}
+.factor-fill.negative{background:linear-gradient(90deg,#18b47a,#33e0a6)}
+.factor-impact{text-align:right;font-size:12.5px;font-weight:750;color:#ff8189;white-space:nowrap;font-variant-numeric:tabular-nums}
+.protective-card .factor-impact{color:#3be3a6}
+.loading,.empty{color:var(--muted);line-height:1.6;font-size:13px}
+
+/* ================= Customer Profile ================= */
+.profile-card{margin-bottom:0}
+.profile-header{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:18px;flex-wrap:wrap}
+.profile-heading{display:flex;align-items:center;gap:11px;min-width:0}
+.profile-heading-icon{width:34px;height:34px;flex:0 0 34px;border-radius:10px;background:var(--blue-soft);color:var(--blue);display:grid;place-items:center}
+.profile-heading-icon svg{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.profile-heading-copy h2{font-size:17px;font-weight:750;color:#fff;letter-spacing:-.02em}
+.profile-heading-copy p{margin-top:3px;color:var(--muted);font-size:12px}
+.profile-edit{
+  display:inline-flex;align-items:center;gap:7px;padding:9px 15px;border-radius:9px;
+  border:1px solid rgba(255,138,42,.42);background:rgba(255,138,42,.08);color:var(--orange);
+  font-size:12.5px;font-weight:750;cursor:pointer;transition:background .18s ease;
+}
+.profile-edit:hover{background:rgba(255,138,42,.15)}
+.profile-edit svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2.3;stroke-linecap:round;stroke-linejoin:round}
+
+.profile-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.profile-item{
+  display:grid;grid-template-columns:38px minmax(0,1fr);align-items:center;gap:11px;
+  padding:12px 13px;border-radius:11px;border:1px solid var(--line);background:#0a0d12;
+  transition:border-color .2s ease,transform .2s ease;
+}
+.profile-item:hover{border-color:rgba(255,138,42,.35);transform:translateY(-1px)}
+.profile-item.profile-alert{background:rgba(239,76,92,.07);border-color:rgba(239,76,92,.3)}
+.profile-item-icon{width:38px;height:38px;border-radius:10px;display:grid;place-items:center;background:var(--blue-soft);color:var(--blue)}
+.profile-item-icon svg{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.profile-item-icon.orange{background:rgba(255,138,42,.16);color:var(--orange)}
+.profile-item-icon.purple{background:var(--purple-soft);color:var(--purple)}
+.profile-item-icon.red{background:var(--red-soft);color:var(--red)}
+.profile-label{display:block;margin-bottom:3px;color:var(--muted-2);font-size:11px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.profile-value{display:block;color:#fff;font-size:13.5px;font-weight:750;letter-spacing:-.005em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.profile-value.long{font-size:12px}
+
+.error{text-align:center;color:#ff6a78;margin-top:25px;font-size:13px}
+
+/* ================= Responsive ================= */
+@media(max-width:1050px){
+  .risk-main{grid-template-columns:minmax(0,1fr) 165px;gap:10px}
+}
+@media(max-width:900px){
+  header{position:relative;width:100%;height:auto;display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-right:0;border-bottom:1px solid #16191f}
+  .side-nav{flex-direction:row;gap:4px}
+  .side-nav a span{display:none}
+  .side-nav a{padding:9px}
+  .container{margin-left:0}
+  .profile-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+@media(max-width:800px){
+  .grid{grid-template-columns:1fr}
+  .risk-main{grid-template-columns:1fr}
+  .risk-legend{width:100%}
+}
+@media(max-width:640px){
+  .profile-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .identity-bar{display:none}
+}
+@media(max-width:430px){
+  .container{padding:20px 14px 40px}
+  .card{padding:16px}
+  .page-title h1{font-size:24px}
+  .other-action{grid-template-columns:1fr;gap:6px}
+  .other-action b{justify-self:start}
+}
+
+/* ================= Light / Dark Theme Toggle ================= */
+html{transition:background-color .25s ease}
+body,
+header,
+.card,
+.identity-bar,
+.back-button,
+.risk-legend,
+.recommendation,
+.other-action,
+.profile-item,
+.badge-soft{
+  transition:background-color .25s ease,color .25s ease,border-color .25s ease,box-shadow .25s ease;
+}
+
+/* Floating theme button — fixed bottom corner, does not affect layout */
+.theme-toggle{
+  position:fixed;
+  right:20px;
+  bottom:20px;
+  z-index:100;
+  width:46px;
+  height:46px;
+  border:1px solid rgba(255,138,42,.38);
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  cursor:pointer;
+  background:#0c1017;
+  color:#ff9a3d;
+  box-shadow:0 10px 28px rgba(0,0,0,.35),0 0 0 1px rgba(255,138,42,.06);
+  transition:transform .2s ease,background-color .25s ease,color .25s ease,border-color .25s ease,box-shadow .25s ease;
+}
+.theme-toggle:hover{
+  transform:translateY(-2px);
+  border-color:rgba(255,138,42,.7);
+  box-shadow:0 12px 30px rgba(0,0,0,.42),0 0 18px rgba(255,138,42,.12);
+}
+.theme-toggle svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.theme-toggle .sun-icon{display:none}
+.theme-toggle .moon-icon{display:block}
+
+/* ================= Light Theme ================= */
+html.light-mode{
+  --bg:#f4f6f9;
+  --bg-2:#eef1f5;
+  --card:#ffffff;
+  --card-2:#ffffff;
+  --line:#dfe3e8;
+  --line-orange:rgba(245,119,28,.34);
+  --ink:#18202a;
+  --muted:#687384;
+  --muted-2:#8a94a3;
+}
+
+html.light-mode body{
+  background:var(--bg);
+  color:var(--ink);
+}
+
+html.light-mode body::before{
+  background:
+    radial-gradient(ellipse 900px 600px at 8% 92%, rgba(255,110,20,.075), transparent 60%),
+    radial-gradient(ellipse 700px 500px at 96% 6%, rgba(255,110,20,.045), transparent 60%),
+    radial-gradient(ellipse 1000px 700px at 50% -10%, rgba(70,50,20,.035), transparent 55%);
+}
+html.light-mode body::after{
+  opacity:.28;
+  background:
+    repeating-linear-gradient(58deg,
+      rgba(255,120,30,.075) 0px,
+      rgba(255,120,30,.075) 1px,
+      transparent 1px,
+      transparent 46px);
+}
+
+/* ================= Orange Geometric Line Work ================= */
+body::before{
+  background:
+    radial-gradient(ellipse 900px 600px at 8% 92%, rgba(255,110,20,.10), transparent 60%),
+    radial-gradient(ellipse 700px 500px at 96% 6%, rgba(255,110,20,.05), transparent 60%),
+    radial-gradient(ellipse 1000px 700px at 50% -10%, rgba(70,50,20,.06), transparent 55%);
+}
+
+/* Dedicated decorative geometry layer; purely visual and non-interactive */
+body::after{
+  width:100%;
+  height:100%;
+  left:0;
+  bottom:0;
+  opacity:1;
+  -webkit-mask-image:none;
+          mask-image:none;
+  background:
+    /* long solid orange diagonals */
+    linear-gradient(122deg, transparent 0 12%, rgba(255,138,42,.72) 12.05% 12.16%, transparent 12.22% 100%),
+    linear-gradient(147deg, transparent 0 73%, rgba(255,138,42,.55) 73.04% 73.13%, transparent 73.20% 100%),
+    linear-gradient(24deg, transparent 0 87%, rgba(255,106,0,.62) 87.05% 87.14%, transparent 87.20% 100%),
+    /* fine technical line grid */
+    repeating-linear-gradient(58deg,
+      rgba(255,138,42,.16) 0px,
+      rgba(255,138,42,.16) 1px,
+      transparent 1px,
+      transparent 92px),
+    repeating-linear-gradient(148deg,
+      transparent 0px,
+      transparent 118px,
+      rgba(255,138,42,.10) 119px,
+      rgba(255,138,42,.10) 120px,
+      transparent 121px,
+      transparent 240px);
+  pointer-events:none;
+}
+
+/* Floating solid-orange geometric accents */
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  z-index:0;
+  pointer-events:none;
+  background:
+    radial-gradient(circle at 7% 86%, rgba(255,138,42,.13) 0 2px, transparent 3px),
+    radial-gradient(circle at 89% 15%, rgba(255,138,42,.12) 0 2px, transparent 3px),
+    linear-gradient(135deg, transparent 0 49.6%, rgba(255,138,42,.58) 49.7% 50%, transparent 50.1%) 7% 78% / 150px 150px no-repeat,
+    linear-gradient(45deg, transparent 0 49.6%, rgba(255,106,0,.48) 49.7% 50%, transparent 50.1%) 88% 12% / 180px 180px no-repeat,
+    radial-gradient(ellipse 900px 600px at 8% 92%, rgba(255,110,20,.10), transparent 60%),
+    radial-gradient(ellipse 700px 500px at 96% 6%, rgba(255,110,20,.05), transparent 60%),
+    radial-gradient(ellipse 1000px 700px at 50% -10%, rgba(70,50,20,.06), transparent 55%);
+}
+
+html.light-mode body::after{
+  opacity:.72;
+  background:
+    linear-gradient(122deg, transparent 0 12%, rgba(244,119,28,.46) 12.05% 12.13%, transparent 12.20% 100%),
+    linear-gradient(147deg, transparent 0 73%, rgba(244,119,28,.34) 73.04% 73.11%, transparent 73.18% 100%),
+    linear-gradient(24deg, transparent 0 87%, rgba(244,106,0,.38) 87.05% 87.12%, transparent 87.19% 100%),
+    repeating-linear-gradient(58deg,
+      rgba(244,119,28,.10) 0px,
+      rgba(244,119,28,.10) 1px,
+      transparent 1px,
+      transparent 92px),
+    repeating-linear-gradient(148deg,
+      transparent 0px,
+      transparent 118px,
+      rgba(244,119,28,.07) 119px,
+      rgba(244,119,28,.07) 120px,
+      transparent 121px,
+      transparent 240px);
+}
+
+
+html.light-mode header{
+  background:#ffffff;
+  border-right-color:#e1e5ea;
+}
+html.light-mode .logo{color:#18202a}
+html.light-mode .logo-mark svg{stroke:#0b0700}
+html.light-mode .side-nav a{color:#687384}
+html.light-mode .side-nav a:hover{color:#252d38;background:#f1f3f6}
+html.light-mode .side-nav a.active{color:var(--orange);background:rgba(255,138,42,.10)}
+
+html.light-mode .back-button{
+  background:#ffffff;
+  color:#4f5a68;
+  border-color:#dfe3e8;
+}
+html.light-mode .identity-bar{background:#ffffff;border-color:#dfe3e8}
+html.light-mode .identity-chip + .identity-chip{border-left-color:#dfe3e8}
+html.light-mode .identity-chip .id-icon{background:#f0f2f5;color:#687384}
+html.light-mode .id-value{color:#202833}
+html.light-mode .avatar-name{color:#29323d}
+html.light-mode .avatar-chip svg{stroke:#687384}
+html.light-mode .profile-menu{
+  background:#ffffff;border-color:rgba(245,119,28,.25);
+  box-shadow:0 18px 45px rgba(31,41,55,.16),0 0 30px rgba(245,119,28,.06);
+}
+html.light-mode .profile-menu-user{border-bottom-color:#e3e6ea}
+html.light-mode .profile-menu-user strong{color:#202833}
+html.light-mode .profile-menu-user span{color:#7b8592}
+html.light-mode .logout-button{color:#4d5866}
+html.light-mode .logout-button:hover{background:rgba(239,76,92,.08);color:#df4d5d}
+html.light-mode .gauge-ticks path{stroke:#aeb7c2}
+html.light-mode .gauge-ticks .gauge-end-tick{stroke:#7e8997}
+html.light-mode .gauge-labels text{fill:#7d8794}
+
+html.light-mode .page-title h1{color:#18202a}
+html.light-mode .page-title p{color:#687384}
+
+html.light-mode .card{
+  background:linear-gradient(150deg,#ffffff 0%,#fbfcfd 100%);
+  border-color:var(--line-orange);
+  box-shadow:0 10px 28px rgba(31,41,55,.08);
+}
+html.light-mode .card-head h2{color:#202833}
+html.light-mode .info-dot{border-color:#8a94a3;color:#687384}
+html.light-mode .badge-soft{
+  background:#f3f5f7;
+  border-color:#e0e4e9;
+  color:#687384;
+}
+
+html.light-mode .gauge-tick{stroke:#c8ced6}
+html.light-mode .risk-score{color:#18202a}
+html.light-mode .risk-score-sub{color:#687384}
+html.light-mode .risk-legend{
+  background:#f8f9fb;
+  border-color:#e0e4e9;
+}
+html.light-mode .risk-legend-title,
+html.light-mode .risk-legend label{color:#4e5967}
+html.light-mode .risk-legend b{color:#8a94a3}
+html.light-mode .risk-bottom-line{
+  box-shadow:none;
+}
+html.light-mode .risk-bottom-copy span{color:#687384}
+
+html.light-mode .retention-action{
+  background:linear-gradient(145deg,rgba(139,107,240,.10),rgba(139,107,240,.045));
+  border-color:rgba(139,107,240,.28);
+}
+html.light-mode .action-name{color:#202833}
+html.light-mode .service-copy,
+html.light-mode #actionReason,
+html.light-mode #actionRecommendation{color:#5f6977}
+html.light-mode .service-copy strong{color:#303945}
+html.light-mode #recommendation{
+  background:#f8f9fb;
+  border-color:#e0e4e9;
+  color:#5f6977;
+}
+html.light-mode .other-actions h3{color:#4e5967}
+html.light-mode .other-action{
+  background:#f8f9fb;
+  border-color:#e0e4e9;
+  color:#394350;
+}
+
+html.light-mode .factor-name{color:#35404d}
+html.light-mode .factor-name small{color:#8a94a3}
+html.light-mode .factor-bar{background:#e9edf1}
+html.light-mode .loading,
+html.light-mode .empty{color:#687384}
+
+html.light-mode .profile-heading-copy h2{color:#202833}
+html.light-mode .profile-heading-copy p{color:#687384}
+html.light-mode .profile-edit{
+  background:rgba(255,138,42,.07);
+}
+html.light-mode .profile-item{
+  background:#f8f9fb;
+  border-color:#e0e4e9;
+}
+html.light-mode .profile-label{color:#8a94a3}
+html.light-mode .profile-value{color:#202833}
+html.light-mode .error{color:#e24b5b}
+
+html.light-mode .theme-toggle{
+  background:#ffffff;
+  color:#f4771c;
+  border-color:rgba(245,119,28,.35);
+  box-shadow:0 8px 24px rgba(31,41,55,.14),0 0 0 1px rgba(245,119,28,.04);
+}
+html.light-mode .theme-toggle .sun-icon{display:block}
+html.light-mode .theme-toggle .moon-icon{display:none}
+
+@media(max-width:640px){
+  .theme-toggle{right:14px;bottom:14px}
+  .sidebar-back{padding-top:10px}
+  .sidebar-back .back-button{width:100%;justify-content:center}
+}
+
+
+/* === Enhanced animated background visibility === */
+.animated-shapes {
+  opacity: 1 !important;
+  pointer-events: none;
+}
+
+.animated-shapes .shape,
+.animated-shapes .ring,
+.animated-shapes .diamond,
+.animated-shapes .organic,
+.animated-shapes .dot {
+  opacity: 0.72 !important;
+  filter: drop-shadow(0 0 10px rgba(255,106,42,.18));
+}
+
+.animated-shapes .shape {
+  animation-duration: 12s !important;
+}
+
+.animated-shapes .ring {
+  animation-duration: 15s !important;
+}
+
+.animated-shapes .diamond {
+  animation-duration: 10s !important;
+}
+
+.animated-shapes .organic {
+  animation-duration: 18s !important;
+}
+
+.animated-shapes .dot {
+  animation-duration: 7s !important;
+}
+
+/* Keep the animated background visible through the glass cards */
+.card {
+  background: rgba(15, 18, 24, 0.48) !important;
+  backdrop-filter: blur(13px) saturate(135%) !important;
+  -webkit-backdrop-filter: blur(13px) saturate(135%) !important;
+}
+
+/* Light mode: darker orange traces + stronger visibility */
+html[data-theme="light"] .animated-shapes .shape,
+html[data-theme="light"] .animated-shapes .ring,
+html[data-theme="light"] .animated-shapes .diamond,
+html[data-theme="light"] .animated-shapes .organic,
+html[data-theme="light"] .animated-shapes .dot,
+body.light-theme .animated-shapes .shape,
+body.light-theme .animated-shapes .ring,
+body.light-theme .animated-shapes .diamond,
+body.light-theme .animated-shapes .organic,
+body.light-theme .animated-shapes .dot {
+  opacity: 0.82 !important;
+  filter: drop-shadow(0 0 8px rgba(190, 70, 15, .20));
+}
+
+/* Override light glass opacity so the background animation remains visible */
+html[data-theme="light"] .card,
+body.light-theme .card {
+  background: rgba(255, 255, 255, 0.54) !important;
+  backdrop-filter: blur(12px) saturate(125%) !important;
+  -webkit-backdrop-filter: blur(12px) saturate(125%) !important;
+}
+
+/* Darker orange used by animated traces in light mode */
+html[data-theme="light"] .animated-shapes *,
+body.light-theme .animated-shapes * {
+  border-color: #c84f17 !important;
+  background-color: #c84f17 !important;
+  color: #c84f17 !important;
+}
+
+
+/* =========================================================
+   LIGHT MODE CARD FIX
+   Keep the same glass/card treatment as dark mode without
+   the unwanted black/gray card fill.
+   ========================================================= */
+html.light-mode .card,
+html.light-mode .risk-card,
+html.light-mode .recommend-card,
+html.light-mode .factor-card,
+html.light-mode .profile-card {
+  background:
+    linear-gradient(145deg,
+      rgba(255,255,255,.20),
+      rgba(255,255,255,.08) 48%,
+      rgba(255,106,42,.018)),
+    rgba(255,255,255,.12) !important;
+  border: 1px solid rgba(255,106,42,.38) !important;
+  box-shadow:
+    0 16px 38px rgba(255,106,42,.10),
+    0 3px 12px rgba(31,41,55,.08),
+    inset 0 1px 0 rgba(255,255,255,.72) !important;
+  backdrop-filter: blur(10px) saturate(115%) !important;
+  -webkit-backdrop-filter: blur(10px) saturate(115%) !important;
+}
+
+/* Same overall hover behavior as dark mode, adapted only for
+   the light surface: lift + orange edge + orange glow. */
+html.light-mode .card:hover {
+  background:
+    linear-gradient(145deg,
+      rgba(255,255,255,.24),
+      rgba(255,255,255,.10) 48%,
+      rgba(255,106,42,.025)),
+    rgba(255,255,255,.15) !important;
+  border-color: rgba(255,106,42,.62) !important;
+  box-shadow:
+    0 24px 55px rgba(31,41,55,.13),
+    0 0 0 1px rgba(255,106,42,.08),
+    0 0 32px rgba(255,106,42,.16),
+    inset 0 1px 0 rgba(255,255,255,.85) !important;
+}
+
+/* Preserve the exact semantic factor hover behavior:
+   red for churn-risk factors and green for protective factors. */
+html.light-mode .churn-risk-card:hover,
+html.light-mode .risk-factors-card:hover,
+html.light-mode .risk-factor-card:hover,
+html.light-mode .factor-card.risk:hover {
+  background:
+    linear-gradient(145deg,
+      rgba(239,76,92,.13),
+      rgba(255,255,255,.10) 55%),
+    rgba(255,255,255,.12) !important;
+  border-color: rgba(239,76,92,.62) !important;
+  box-shadow:
+    0 24px 55px rgba(31,41,55,.13),
+    0 0 0 1px rgba(239,76,92,.10),
+    0 0 34px rgba(239,76,92,.18),
+    inset 0 1px 0 rgba(255,255,255,.82) !important;
+}
+
+html.light-mode .protective-card:hover,
+html.light-mode .protective-factors-card:hover,
+html.light-mode .protective-factor-card:hover,
+html.light-mode .factor-card.protective:hover {
+  background:
+    linear-gradient(145deg,
+      rgba(31,212,138,.13),
+      rgba(255,255,255,.10) 55%),
+    rgba(255,255,255,.12) !important;
+  border-color: rgba(31,212,138,.62) !important;
+  box-shadow:
+    0 24px 55px rgba(31,41,55,.13),
+    0 0 0 1px rgba(31,212,138,.10),
+    0 0 34px rgba(31,212,138,.18),
+    inset 0 1px 0 rgba(255,255,255,.82) !important;
+}
+
+/* Keep the animated orange linework dark and clearly visible in
+   light mode, without painting the entire background elements. */
+html.light-mode .animated-shapes .shape,
+html.light-mode .animated-shapes .ring,
+html.light-mode .animated-shapes .diamond,
+html.light-mode .animated-shapes .hex,
+html.light-mode .animated-shapes .organic {
+  border-color: #b94713 !important;
+  opacity: .82 !important;
+  filter: drop-shadow(0 0 8px rgba(185,71,19,.18)) !important;
+}
+
+html.light-mode .animated-shapes .dot {
+  background: #b94713 !important;
+  opacity: .88 !important;
+  filter: drop-shadow(0 0 8px rgba(185,71,19,.22)) !important;
+}
+
+
+/* === LIGHT MODE READABILITY / BRAND POLISH === */
+html.light-mode body,
+body.light-theme {
+  color: #182230 !important;
+}
+
+html.light-mode .main,
+body.light-theme .main {
+  color: #182230 !important;
+}
+
+html.light-mode .card h1,
+html.light-mode .card h2,
+html.light-mode .card h3,
+html.light-mode .card h4,
+html.light-mode .card .title,
+html.light-mode .card .section-title,
+html.light-mode .card .factor-title,
+html.light-mode .card .label,
+html.light-mode .card strong,
+html.light-mode .card b,
+body.light-theme .card h1,
+body.light-theme .card h2,
+body.light-theme .card h3,
+body.light-theme .card h4,
+body.light-theme .card .title,
+body.light-theme .card .section-title,
+body.light-theme .card .factor-title,
+body.light-theme .card .label,
+body.light-theme .card strong,
+body.light-theme .card b {
+  color: #17212f !important;
+  text-shadow: none !important;
+}
+
+html.light-mode .card p,
+html.light-mode .card span,
+html.light-mode .card li,
+html.light-mode .card td,
+html.light-mode .card .muted,
+html.light-mode .card .subtle,
+html.light-mode .card .description,
+html.light-mode .card .meta,
+html.light-mode .card .context,
+html.light-mode .card .recommendation,
+body.light-theme .card p,
+body.light-theme .card span,
+body.light-theme .card li,
+body.light-theme .card td,
+body.light-theme .card .muted,
+body.light-theme .card .subtle,
+body.light-theme .card .description,
+body.light-theme .card .meta,
+body.light-theme .card .context,
+body.light-theme .card .recommendation {
+  color: #3f4d5f !important;
+}
+
+html.light-mode .card .orange,
+html.light-mode .card .accent,
+html.light-mode .card .highlight,
+html.light-mode .card .section-accent,
+body.light-theme .card .orange,
+body.light-theme .card .accent,
+body.light-theme .card .highlight,
+body.light-theme .card .section-accent {
+  color: #c84f17 !important;
+}
+
+html.light-mode .sidebar,
+body.light-theme .sidebar {
+  background: rgba(255,255,255,.82) !important;
+  border-right-color: rgba(255,106,42,.18) !important;
+}
+
+html.light-mode .nav-item,
+body.light-theme .nav-item {
+  color: #536174 !important;
+}
+
+html.light-mode .nav-item:hover,
+html.light-mode .nav-item.active,
+body.light-theme .nav-item:hover,
+body.light-theme .nav-item.active {
+  color: #c84f17 !important;
+  background: rgba(255,106,42,.10) !important;
+}
+
+html.light-mode .sidebar-back,
+body.light-theme .sidebar-back {
+  color: #465467 !important;
+  border-color: rgba(255,106,42,.30) !important;
+  background: rgba(255,255,255,.68) !important;
+}
+
+html.light-mode .sidebar-back:hover,
+body.light-theme .sidebar-back:hover {
+  color: #c84f17 !important;
+  border-color: rgba(255,106,42,.62) !important;
+  box-shadow: 0 10px 26px rgba(255,106,42,.15) !important;
+}
+
+/* More legible orange card edge and internal orange accents */
+html.light-mode .card,
+body.light-theme .card {
+  border-color: rgba(200,79,23,.52) !important;
+  box-shadow:
+    0 16px 36px rgba(200,79,23,.12),
+    0 4px 14px rgba(25,35,48,.08),
+    inset 0 1px 0 rgba(255,255,255,.88) !important;
+}
+
+html.light-mode .card:hover,
+body.light-theme .card:hover {
+  border-color: rgba(200,79,23,.78) !important;
+  box-shadow:
+    0 24px 55px rgba(25,35,48,.13),
+    0 0 30px rgba(255,106,42,.18),
+    inset 0 1px 0 rgba(255,255,255,.92) !important;
+}
+
+/* Make the RetainIQ mark crisp in both themes */
+.brand-mark {
+  width: 34px !important;
+  height: 34px !important;
+  display: grid !important;
+  place-items: center !important;
+  flex: 0 0 34px !important;
+}
+
+.brand-mark svg {
+  width: 34px !important;
+  height: 34px !important;
+  display: block !important;
+}
+
+.brand-name {
+  font-weight: 800 !important;
+  letter-spacing: .02em !important;
+}
+
+.brand-name span {
+  color: #ff6a2a !important;
+}
+
+
+/* === FINAL LIGHT MODE CLARITY === */
+html.light-mode .card,
+body.light-theme .card {
+  color: #182230 !important;
+  border: 1px solid rgba(194, 69, 15, .58) !important;
+  background:
+    linear-gradient(145deg,
+      rgba(255,255,255,.24),
+      rgba(255,255,255,.10) 52%,
+      rgba(255,106,42,.025)),
+    rgba(255,255,255,.16) !important;
+  box-shadow:
+    0 16px 36px rgba(194,69,15,.14),
+    0 4px 14px rgba(25,35,48,.09),
+    inset 0 1px 0 rgba(255,255,255,.92) !important;
+  backdrop-filter: blur(10px) saturate(120%) !important;
+  -webkit-backdrop-filter: blur(10px) saturate(120%) !important;
+}
+
+html.light-mode .card:hover,
+body.light-theme .card:hover {
+  border-color: rgba(194,69,15,.82) !important;
+  box-shadow:
+    0 24px 55px rgba(25,35,48,.14),
+    0 0 34px rgba(255,106,42,.20),
+    inset 0 1px 0 rgba(255,255,255,.95) !important;
+}
+
+html.light-mode .card h1,
+html.light-mode .card h2,
+html.light-mode .card h3,
+html.light-mode .card h4,
+html.light-mode .card strong,
+html.light-mode .card b,
+html.light-mode .card .title,
+html.light-mode .card .section-title,
+html.light-mode .card .factor-title,
+body.light-theme .card h1,
+body.light-theme .card h2,
+body.light-theme .card h3,
+body.light-theme .card h4,
+body.light-theme .card strong,
+body.light-theme .card b,
+body.light-theme .card .title,
+body.light-theme .card .section-title,
+body.light-theme .card .factor-title {
+  color: #152033 !important;
+  font-weight: 700 !important;
+}
+
+html.light-mode .card p,
+html.light-mode .card span,
+html.light-mode .card li,
+html.light-mode .card td,
+html.light-mode .card .muted,
+html.light-mode .card .subtle,
+html.light-mode .card .description,
+html.light-mode .card .meta,
+html.light-mode .card .context,
+body.light-theme .card p,
+body.light-theme .card span,
+body.light-theme .card li,
+body.light-theme .card td,
+body.light-theme .card .muted,
+body.light-theme .card .subtle,
+body.light-theme .card .description,
+body.light-theme .card .meta,
+body.light-theme .card .context {
+  color: #344255 !important;
+}
+
+html.light-mode .card .orange,
+html.light-mode .card .accent,
+html.light-mode .card .highlight,
+body.light-theme .card .orange,
+body.light-theme .card .accent,
+body.light-theme .card .highlight {
+  color: #c2450f !important;
+}
+
+html.light-mode .logo .logo-mark,
+body.light-theme .logo .logo-mark {
+  background: transparent !important;
+  box-shadow: 0 5px 16px rgba(255,106,42,.22) !important;
+}
+
+html.light-mode .logo .logo-mark svg,
+body.light-theme .logo .logo-mark svg {
+  width: 30px !important;
+  height: 30px !important;
+  stroke: none !important;
+}
+
+html.light-mode .logo,
+body.light-theme .logo {
+  color: #17212f !important;
+}
+
+html.light-mode .logo b,
+body.light-theme .logo b {
+  color: #c2450f !important;
+}
+
+
+/* =========================================================
+   SIDEBAR NAVIGATION — Dashboard / Customers / Analysis
+   Theme switch lives inside the sidebar.
+   ========================================================= */
+.side-nav {
+  display:flex;
+  flex-direction:column;
+  gap:5px;
+}
+
+.side-nav a {
+  display:flex;
+  align-items:center;
+  gap:11px;
+  min-height:42px;
+  padding:0 12px;
+  border-radius:9px;
+  color:#8894a4;
+  text-decoration:none;
+  font-size:13.5px;
+  font-weight:600;
+  border:1px solid transparent;
+  transition:background .2s ease,color .2s ease,border-color .2s ease,transform .2s ease;
+}
+
+.side-nav a svg {
+  width:18px;
+  height:18px;
+  flex:0 0 18px;
+  stroke:currentColor;
+  fill:none;
+  stroke-width:2;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+}
+
+.side-nav a:hover {
+  color:#f1f4f8;
+  transform:translateX(2px);
+  background:rgba(255,106,42,.075);
+  border-color:rgba(255,106,42,.15);
+}
+
+.side-nav a.active {
+  color:var(--orange);
+  background:rgba(255,138,42,.13);
+  border-color:rgba(255,138,42,.12);
+}
+
+.sidebar-controls {
+  margin-top:auto;
+  padding-top:18px;
+  display:flex;
+  flex-direction:column;
+  gap:7px;
+}
+
+.sidebar-theme-toggle,
+.sidebar-home {
+  width:100%;
+  min-height:42px;
+  border-radius:9px;
+  padding:0 12px;
+  display:flex;
+  align-items:center;
+  gap:11px;
+  cursor:pointer;
+  font-family:inherit;
+  font-size:13px;
+  font-weight:650;
+  transition:background .2s ease,color .2s ease,border-color .2s ease,transform .2s ease,box-shadow .2s ease;
+}
+
+.sidebar-theme-toggle {
+  border:1px solid rgba(255,138,42,.20);
+  background:rgba(255,138,42,.055);
+  color:#c8d0da;
+}
+
+.sidebar-home {
+  border:1px solid rgba(255,255,255,.10);
+  background:rgba(255,255,255,.025);
+  color:#aab4c1;
+}
+
+.sidebar-theme-toggle:hover,
+.sidebar-home:hover {
+  transform:translateX(2px);
+  color:var(--orange);
+  border-color:rgba(255,138,42,.42);
+  background:rgba(255,138,42,.09);
+  box-shadow:0 7px 20px rgba(255,106,42,.08);
+}
+
+.sidebar-theme-toggle .theme-icon,
+.sidebar-home svg {
+  width:18px;
+  height:18px;
+  flex:0 0 18px;
+  display:grid;
+  place-items:center;
+}
+
+.sidebar-theme-toggle .theme-icon svg {
+  width:18px;
+  height:18px;
+  stroke:currentColor;
+  fill:none;
+  stroke-width:2;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+}
+
+.sidebar-home svg {
+  stroke:currentColor;
+  fill:none;
+  stroke-width:2;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+}
+
+.sidebar-theme-toggle .sun-icon { display:none; }
+.sidebar-theme-toggle .moon-icon { display:grid; }
+
+/* Light-mode sidebar controls */
+html.light-mode .sidebar-theme-toggle {
+  color:#4b596b;
+  border-color:rgba(194,69,15,.25);
+  background:rgba(255,106,42,.055);
+}
+
+html.light-mode .sidebar-home {
+  color:#536174;
+  border-color:rgba(194,69,15,.20);
+  background:rgba(255,255,255,.42);
+}
+
+html.light-mode .sidebar-theme-toggle:hover,
+html.light-mode .sidebar-home:hover {
+  color:#c2450f;
+  border-color:rgba(194,69,15,.48);
+  background:rgba(255,106,42,.09);
+}
+
+html.light-mode .side-nav a {
+  color:#536174;
+}
+
+html.light-mode .side-nav a:hover {
+  color:#c2450f;
+  background:rgba(255,106,42,.075);
+}
+
+html.light-mode .side-nav a.active {
+  color:#c2450f;
+  background:rgba(255,106,42,.105);
+  border-color:rgba(194,69,15,.16);
+}
+
+/* Responsive sidebar */
+@media(max-width:900px){
+  .sidebar-controls {
+    margin-top:0;
+    padding-top:0;
+    flex-direction:row;
+  }
+  .sidebar-theme-toggle,
+  .sidebar-home {
+    width:auto;
+    min-height:40px;
+  }
+  .sidebar-theme-toggle .theme-text,
+  .sidebar-home span {
+    display:none;
+  }
+}
+
+
+/* === Compact RetainIQ reference logo === */
+.logo {
+  display:flex !important;
+  align-items:center !important;
+  gap:6px !important;
+  padding:2px 8px 26px !important;
+  font-size:12px !important;
+  line-height:1 !important;
+  font-weight:800 !important;
+  letter-spacing:-.015em !important;
+  white-space:nowrap !important;
+}
+
+.logo .logo-mark {
+  width:24px !important;
+  height:24px !important;
+  flex:0 0 24px !important;
+  border-radius:6px !important;
+  display:grid !important;
+  place-items:center !important;
+  background:transparent !important;
+  box-shadow:0 3px 10px rgba(255,106,0,.22) !important;
+  overflow:hidden !important;
+}
+
+.logo .logo-mark svg {
+  width:24px !important;
+  height:24px !important;
+  display:block !important;
+  stroke:none !important;
+}
+
+.logo-wordmark {
+  display:inline-flex !important;
+  align-items:center !important;
+  gap:3px !important;
+  color:#f4f6fb !important;
+  font-weight:800 !important;
+}
+
+.logo-wordmark .retain-text {
+  color:#f4f6fb !important;
+}
+
+.logo-wordmark b {
+  color:#ff6a2a !important;
+  font-weight:850 !important;
+}
+
+html.light-mode .logo-wordmark,
+html.light-mode .logo-wordmark .retain-text {
+  color:#273244 !important;
+}
+
+html.light-mode .logo-wordmark b {
+  color:#c2450f !important;
+}
+
+
+/* =========================================================
+   LIGHT MODE — DEEP RANGE SHADING + CARD HOVER
+   ========================================================= */
+
+/* Stronger translucent "range" across every major card */
+html.light-mode .card {
+  background:
+    /* broad orange range glow */
+    radial-gradient(ellipse 82% 72% at 0% 100%,
+      rgba(255,106,42,.13) 0%,
+      rgba(255,106,42,.055) 34%,
+      transparent 68%),
+    /* upper glass highlight */
+    linear-gradient(135deg,
+      rgba(255,255,255,.82) 0%,
+      rgba(255,255,255,.48) 42%,
+      rgba(255,245,238,.36) 72%,
+      rgba(255,106,42,.055) 100%),
+    rgba(255,255,255,.38) !important;
+
+  border: 1.5px solid rgba(210,76,20,.58) !important;
+
+  box-shadow:
+    0 18px 38px rgba(42,48,58,.10),
+    0 5px 18px rgba(210,76,20,.12),
+    0 0 0 1px rgba(255,106,42,.055),
+    inset 0 1px 0 rgba(255,255,255,.94),
+    inset 0 -18px 38px rgba(255,106,42,.045) !important;
+
+  -webkit-backdrop-filter: blur(10px) saturate(122%);
+  backdrop-filter: blur(10px) saturate(122%);
+}
+
+/* A second, visible edge-range layer */
+html.light-mode .card::before {
+  background:
+    linear-gradient(115deg,
+      rgba(255,255,255,.54) 0%,
+      transparent 22%,
+      transparent 67%,
+      rgba(255,106,42,.075) 100%),
+    radial-gradient(ellipse 72% 58% at 4% 100%,
+      rgba(255,106,42,.105),
+      transparent 70%) !important;
+  opacity: 1 !important;
+}
+
+/* Orange contour/range ring becomes more visible */
+html.light-mode .card::after {
+  border-color: rgba(210,76,20,.20) !important;
+  box-shadow:
+    0 0 0 18px rgba(255,106,42,.025),
+    0 0 65px rgba(255,106,42,.10) !important;
+}
+
+/* Individual major cards get slightly different range placement
+   so the page doesn't look like four identical rectangles. */
+html.light-mode .risk-card {
+  background:
+    radial-gradient(ellipse 72% 82% at 100% 0%,
+      rgba(255,106,42,.13),
+      transparent 66%),
+    linear-gradient(135deg,
+      rgba(255,255,255,.84),
+      rgba(255,255,255,.46) 52%,
+      rgba(255,245,238,.30)),
+    rgba(255,255,255,.38) !important;
+}
+
+html.light-mode .recommend-card {
+  background:
+    radial-gradient(ellipse 78% 76% at 100% 0%,
+      rgba(139,107,240,.075),
+      rgba(255,106,42,.045) 42%,
+      transparent 70%),
+    linear-gradient(135deg,
+      rgba(255,255,255,.84),
+      rgba(255,255,255,.46) 52%,
+      rgba(255,245,238,.30)),
+    rgba(255,255,255,.38) !important;
+}
+
+html.light-mode .factor-card:first-of-type {
+  background:
+    radial-gradient(ellipse 78% 76% at 0% 100%,
+      rgba(239,76,92,.085),
+      rgba(255,106,42,.045) 42%,
+      transparent 70%),
+    linear-gradient(135deg,
+      rgba(255,255,255,.84),
+      rgba(255,255,255,.46) 52%,
+      rgba(255,245,238,.30)),
+    rgba(255,255,255,.38) !important;
+}
+
+html.light-mode .protective-card {
+  background:
+    radial-gradient(ellipse 78% 76% at 100% 100%,
+      rgba(31,212,138,.09),
+      rgba(255,255,255,.035) 44%,
+      transparent 70%),
+    linear-gradient(135deg,
+      rgba(255,255,255,.84),
+      rgba(255,255,255,.46) 52%,
+      rgba(248,255,252,.32)),
+    rgba(255,255,255,.38) !important;
+}
+
+/* =========================================================
+   LIGHT MODE HOVER — clearly visible lift + range glow
+   ========================================================= */
+html.light-mode .card:hover {
+  transform: translateY(-6px) !important;
+
+  background:
+    radial-gradient(ellipse 78% 78% at 0% 100%,
+      rgba(255,106,42,.19),
+      rgba(255,106,42,.065) 38%,
+      transparent 70%),
+    linear-gradient(135deg,
+      rgba(255,255,255,.91),
+      rgba(255,255,255,.48) 48%,
+      rgba(255,240,232,.40) 100%),
+    rgba(255,255,255,.40) !important;
+
+  border-color: rgba(220,76,17,.86) !important;
+
+  box-shadow:
+    0 28px 58px rgba(34,42,52,.15),
+    0 8px 26px rgba(210,76,20,.18),
+    0 0 0 1px rgba(255,106,42,.12),
+    0 0 38px rgba(255,106,42,.16),
+    inset 0 1px 0 rgba(255,255,255,.98),
+    inset 0 -20px 42px rgba(255,106,42,.065) !important;
+}
+
+html.light-mode .card:hover::before {
+  opacity: 1 !important;
+  transform: translate3d(7px,3px,0) !important;
+}
+
+/* Risk-factor card: red hover, matching the dark-mode semantic effect */
+html.light-mode .churn-risk-card:hover,
+html.light-mode .risk-factors-card:hover,
+html.light-mode .risk-factor-card:hover,
+html.light-mode .factor-card.risk:hover {
+  background:
+    radial-gradient(ellipse 82% 82% at 0% 100%,
+      rgba(239,76,92,.19),
+      rgba(239,76,92,.065) 42%,
+      transparent 72%),
+    linear-gradient(135deg,
+      rgba(255,255,255,.90),
+      rgba(255,244,246,.45) 52%,
+      rgba(255,235,238,.34)),
+    rgba(255,255,255,.40) !important;
+
+  border-color: rgba(239,76,92,.76) !important;
+
+  box-shadow:
+    0 28px 58px rgba(45,42,48,.14),
+    0 0 38px rgba(239,76,92,.19),
+    0 8px 26px rgba(239,76,92,.14),
+    inset 0 1px 0 rgba(255,255,255,.98),
+    inset 0 -20px 42px rgba(239,76,92,.055) !important;
+}
+
+/* Protective-factor card: green hover */
+html.light-mode .protective-card:hover,
+html.light-mode .protective-factors-card:hover,
+html.light-mode .protective-factor-card:hover,
+html.light-mode .factor-card.protective:hover {
+  background:
+    radial-gradient(ellipse 82% 82% at 100% 100%,
+      rgba(31,212,138,.18),
+      rgba(31,212,138,.06) 42%,
+      transparent 72%),
+    linear-gradient(135deg,
+      rgba(255,255,255,.90),
+      rgba(244,255,250,.46) 52%,
+      rgba(236,255,247,.34)),
+    rgba(255,255,255,.40) !important;
+
+  border-color: rgba(21,177,116,.76) !important;
+
+  box-shadow:
+    0 28px 58px rgba(38,48,45,.14),
+    0 0 38px rgba(31,212,138,.18),
+    0 8px 26px rgba(31,212,138,.13),
+    inset 0 1px 0 rgba(255,255,255,.98),
+    inset 0 -20px 42px rgba(31,212,138,.055) !important;
+}
+
+/* Make the orange card edges and headings readable against the stronger glass */
+html.light-mode .card-head h2,
+html.light-mode .profile-heading-copy h2 {
+  color: #17212f !important;
+  text-shadow: 0 1px 0 rgba(255,255,255,.55) !important;
+}
+
+html.light-mode .page-title h1 {
+  color: #101a29 !important;
+}
+
+html.light-mode .page-title h1 b {
+  color: #c84f17 !important;
+}
+
+
+/* =========================================================
+   RETAINIQ — ADVANCED AMBIENT MOTION + SIDEBAR LINEWORK
+   ========================================================= */
+
+/* Dedicated animated technical background */
+.animated-shapes {
+  opacity: 1 !important;
+}
+
+.animated-shapes::before,
+.animated-shapes::after {
+  content:"";
+  position:absolute;
+  inset:-15%;
+  pointer-events:none;
+}
+
+.animated-shapes::before {
+  background:
+    linear-gradient(118deg, transparent 0 18%, rgba(255,106,42,.12) 18.08%, transparent 18.22% 43%,
+      rgba(255,139,77,.08) 43.08%, transparent 43.22% 72%,
+      rgba(255,106,42,.10) 72.08%, transparent 72.22%),
+    linear-gradient(28deg, transparent 0 31%, rgba(255,106,42,.075) 31.08%, transparent 31.22% 67%,
+      rgba(255,139,77,.07) 67.08%, transparent 67.22%);
+  animation: backgroundSweep 22s ease-in-out infinite alternate;
+}
+
+.animated-shapes::after {
+  background:
+    radial-gradient(ellipse 420px 180px at 18% 22%, transparent 63%, rgba(255,106,42,.09) 63.3%, transparent 63.8%),
+    radial-gradient(ellipse 520px 230px at 84% 72%, transparent 65%, rgba(255,139,77,.075) 65.3%, transparent 65.8%);
+  animation: contourDrift 26s ease-in-out infinite alternate;
+}
+
+.animated-shapes .shape,
+.animated-shapes .ring,
+.animated-shapes .diamond,
+.animated-shapes .hex,
+.animated-shapes .dot {
+  will-change: transform, opacity;
+}
+
+/* Additional geometric elements */
+.animated-shapes .shape.s11 {
+  width:115px;height:115px;left:34%;top:7%;
+  border-radius:30% 70% 55% 45%;
+  animation: floatShape11 16s ease-in-out infinite;
+}
+.animated-shapes .shape.s12 {
+  width:48px;height:48px;left:7%;top:66%;
+  border-radius:12px;
+  transform:rotate(45deg);
+  animation: floatShape12 12s ease-in-out infinite;
+}
+.animated-shapes .shape.s13 {
+  width:180px;height:180px;right:30%;top:42%;
+  border-radius:50%;
+  animation: floatShape13 21s ease-in-out infinite;
+}
+.animated-shapes .shape.s14 {
+  width:72px;height:72px;right:4%;top:78%;
+  border-radius:18px 45% 18px 45%;
+  transform:rotate(22deg);
+  animation: floatShape14 13s ease-in-out infinite;
+}
+.animated-shapes .shape.s15 {
+  width:28px;height:28px;left:47%;top:82%;
+  border-radius:6px;
+  transform:rotate(45deg);
+  animation: floatShape15 8s ease-in-out infinite;
+}
+.animated-shapes .shape.s16 {
+  width:260px;height:120px;left:-60px;top:34%;
+  border-radius:50%;
+  animation: floatShape16 24s ease-in-out infinite;
+}
+.animated-shapes .shape.s17 {
+  width:96px;height:96px;right:14%;top:38%;
+  border-radius:42% 58% 62% 38%;
+  animation: floatShape17 15s ease-in-out infinite;
+}
+
+.animated-shapes .ring.r4 {
+  width:240px;height:240px;left:17%;top:28%;
+  animation: ringDrift4 24s linear infinite;
+}
+.animated-shapes .ring.r5 {
+  width:110px;height:110px;right:9%;bottom:13%;
+  animation: ringDrift5 18s linear infinite reverse;
+}
+.animated-shapes .ring.r6 {
+  width:310px;height:150px;right:32%;top:-30px;
+  border-radius:50%;
+  animation: ringDrift6 28s ease-in-out infinite;
+}
+
+.animated-shapes .dot.d11 { left:25%;top:14%;width:5px;height:5px;animation: dotPulse11 5s ease-in-out infinite; }
+.animated-shapes .dot.d12 { left:61%;top:11%;width:7px;height:7px;animation: dotPulse12 7s ease-in-out infinite; }
+.animated-shapes .dot.d13 { left:82%;top:47%;width:4px;height:4px;animation: dotPulse13 6s ease-in-out infinite; }
+.animated-shapes .dot.d14 { left:38%;top:59%;width:6px;height:6px;animation: dotPulse14 8s ease-in-out infinite; }
+.animated-shapes .dot.d15 { left:10%;top:88%;width:4px;height:4px;animation: dotPulse15 5.5s ease-in-out infinite; }
+.animated-shapes .dot.d16 { right:26%;top:88%;width:7px;height:7px;animation: dotPulse16 9s ease-in-out infinite; }
+
+/* Animated line segments */
+.animated-shapes .trace {
+  position:absolute;
+  height:1px;
+  transform-origin:left center;
+  background:linear-gradient(90deg, transparent, rgba(255,106,42,.36), transparent);
+  box-shadow:0 0 8px rgba(255,106,42,.10);
+  opacity:.7;
+}
+.animated-shapes .trace.t1 { width:260px;left:3%;top:31%;transform:rotate(-19deg);animation:traceMove1 13s ease-in-out infinite; }
+.animated-shapes .trace.t2 { width:330px;right:1%;top:27%;transform:rotate(24deg);animation:traceMove2 17s ease-in-out infinite; }
+.animated-shapes .trace.t3 { width:220px;left:42%;bottom:17%;transform:rotate(-32deg);animation:traceMove3 15s ease-in-out infinite; }
+.animated-shapes .trace.t4 { width:290px;right:12%;bottom:8%;transform:rotate(-8deg);animation:traceMove4 19s ease-in-out infinite; }
+
+/* Motion */
+@keyframes backgroundSweep {
+  0% { transform:translate3d(-2%, -1%, 0) scale(1); }
+  50% { transform:translate3d(2%, 1.5%, 0) scale(1.035); }
+  100% { transform:translate3d(-1%, 2%, 0) scale(1.015); }
+}
+@keyframes contourDrift {
+  0% { transform:translate3d(0,0,0) rotate(0deg); opacity:.55; }
+  50% { transform:translate3d(2%, -1%,0) rotate(1deg); opacity:.9; }
+  100% { transform:translate3d(-1%,2%,0) rotate(-1deg); opacity:.65; }
+}
+@keyframes floatShape11 {
+  0%,100% { transform:translate3d(0,0,0) rotate(0deg); }
+  50% { transform:translate3d(42px,28px,0) rotate(80deg) scale(1.12); }
+}
+@keyframes floatShape12 {
+  0%,100% { transform:translate3d(0,0,0) rotate(45deg); }
+  50% { transform:translate3d(30px,-45px,0) rotate(135deg); }
+}
+@keyframes floatShape13 {
+  0%,100% { transform:translate3d(0,0,0) scale(1); }
+  50% { transform:translate3d(-38px,30px,0) scale(1.1); }
+}
+@keyframes floatShape14 {
+  0%,100% { transform:translate3d(0,0,0) rotate(22deg); }
+  50% { transform:translate3d(-35px,-30px,0) rotate(112deg); }
+}
+@keyframes floatShape15 {
+  0%,100% { transform:translate3d(0,0,0) rotate(45deg); opacity:.35; }
+  50% { transform:translate3d(55px,-22px,0) rotate(225deg); opacity:.9; }
+}
+@keyframes floatShape16 {
+  0%,100% { transform:translate3d(0,0,0) rotate(-12deg); }
+  50% { transform:translate3d(70px,22px,0) rotate(8deg); }
+}
+@keyframes floatShape17 {
+  0%,100% { transform:translate3d(0,0,0) rotate(0deg); }
+  50% { transform:translate3d(-25px,42px,0) rotate(65deg); }
+}
+@keyframes ringDrift4 {
+  0% { transform:translate(0,0) rotate(0deg); }
+  50% { transform:translate(40px,-25px) rotate(120deg); }
+  100% { transform:translate(0,0) rotate(240deg); }
+}
+@keyframes ringDrift5 {
+  0% { transform:translate(0,0) rotate(0deg); }
+  50% { transform:translate(-30px,25px) rotate(180deg); }
+  100% { transform:translate(0,0) rotate(360deg); }
+}
+@keyframes ringDrift6 {
+  0%,100% { transform:translate3d(0,0,0) scale(1); }
+  50% { transform:translate3d(-50px,35px,0) scale(1.08); }
+}
+@keyframes dotPulse11 { 0%,100%{transform:translate(0,0);opacity:.3} 50%{transform:translate(30px,45px);opacity:1} }
+@keyframes dotPulse12 { 0%,100%{transform:translate(0,0);opacity:.35} 50%{transform:translate(-45px,25px);opacity:.95} }
+@keyframes dotPulse13 { 0%,100%{transform:translate(0,0);opacity:.25} 50%{transform:translate(-25px,-38px);opacity:1} }
+@keyframes dotPulse14 { 0%,100%{transform:translate(0,0);opacity:.3} 50%{transform:translate(35px,20px);opacity:.9} }
+@keyframes dotPulse15 { 0%,100%{transform:translate(0,0);opacity:.3} 50%{transform:translate(28px,-32px);opacity:1} }
+@keyframes dotPulse16 { 0%,100%{transform:translate(0,0);opacity:.25} 50%{transform:translate(-38px,-28px);opacity:.95} }
+@keyframes traceMove1 { 0%,100%{transform:translateX(0) rotate(-19deg);opacity:.35} 50%{transform:translateX(80px) rotate(-15deg);opacity:.9} }
+@keyframes traceMove2 { 0%,100%{transform:translateX(0) rotate(24deg);opacity:.35} 50%{transform:translateX(-70px) rotate(19deg);opacity:.85} }
+@keyframes traceMove3 { 0%,100%{transform:translateX(0) rotate(-32deg);opacity:.3} 50%{transform:translateX(55px) rotate(-26deg);opacity:.85} }
+@keyframes traceMove4 { 0%,100%{transform:translateX(0) rotate(-8deg);opacity:.3} 50%{transform:translateX(-65px) rotate(-13deg);opacity:.8} }
+
+/* =========================================================
+   SIDEBAR — subtle technical linework
+   ========================================================= */
+header {
+  position:fixed;
+  overflow:hidden;
+}
+
+header::before {
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  opacity:.65;
+  background:
+    linear-gradient(135deg, transparent 0 14%, rgba(255,106,42,.15) 14.2%, transparent 14.45%),
+    linear-gradient(25deg, transparent 0 64%, rgba(255,106,42,.10) 64.15%, transparent 64.4%),
+    repeating-linear-gradient(135deg,
+      transparent 0 54px,
+      rgba(255,106,42,.055) 54px 55px,
+      transparent 55px 108px);
+  transform:translateX(-20px);
+  animation:sidebarLines 18s ease-in-out infinite alternate;
+}
+
+header::after {
+  content:"";
+  position:absolute;
+  width:170px;height:170px;
+  right:-118px;top:150px;
+  border:1px solid rgba(255,106,42,.16);
+  border-radius:50%;
+  box-shadow:
+    0 0 0 20px rgba(255,106,42,.025),
+    0 0 30px rgba(255,106,42,.055);
+  pointer-events:none;
+  animation:sidebarRing 15s ease-in-out infinite;
+}
+
+header > * {
+  position:relative;
+  z-index:2;
+}
+
+@keyframes sidebarLines {
+  0% { transform:translate3d(-22px,0,0); opacity:.38; }
+  50% { transform:translate3d(8px,-8px,0); opacity:.75; }
+  100% { transform:translate3d(-5px,12px,0); opacity:.52; }
+}
+@keyframes sidebarRing {
+  0%,100% { transform:translate(0,0) scale(1); opacity:.35; }
+  50% { transform:translate(-20px,24px) scale(1.12); opacity:.75; }
+}
+
+/* Light sidebar linework is darker for visibility */
+html.light-mode header::before {
+  opacity:.9;
+  background:
+    linear-gradient(135deg, transparent 0 14%, rgba(190,65,16,.24) 14.2%, transparent 14.45%),
+    linear-gradient(25deg, transparent 0 64%, rgba(190,65,16,.17) 64.15%, transparent 64.4%),
+    repeating-linear-gradient(135deg,
+      transparent 0 54px,
+      rgba(190,65,16,.075) 54px 55px,
+      transparent 55px 108px);
+}
+html.light-mode header::after {
+  border-color:rgba(190,65,16,.24);
+  box-shadow:
+    0 0 0 20px rgba(190,65,16,.035),
+    0 0 30px rgba(190,65,16,.075);
+}
+
+/* Keep sidebar controls above decorative linework */
+.sidebar-controls,
+.side-nav,
+.logo {
+  position:relative;
+  z-index:3;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animated-shapes::before,
+  .animated-shapes::after,
+  .animated-shapes .shape,
+  .animated-shapes .ring,
+  .animated-shapes .dot,
+  .animated-shapes .trace,
+  header::before,
+  header::after {
+    animation:none !important;
+  }
+}
+
+
+
+/* =========================================================
+   REFERENCE COLOR THEME
+   Dark and light variables matched to the supplied file.
+   ========================================================= */
+:root{
+  --bg:#080a0b !important;
+  --bg2:#100b09 !important;
+  --surface:#0d1214 !important;
+  --surface2:#111719 !important;
+  --surface3:#151c1f !important;
+  --line:rgba(255,255,255,.09) !important;
+  --line-soft:rgba(255,255,255,.055) !important;
+  --text:#f4f5f6 !important;
+  --text-2:#c7ced1 !important;
+  --muted:#849096 !important;
+  --dim:#5f6b71 !important;
+  --orange:#ff6a2a !important;
+  --orange-2:#ff8b4d !important;
+  --green:#2ac28b !important;
+  --shadow:0 24px 70px rgba(0,0,0,.28) !important;
+}
+
+html.light-mode{
+  --bg:#fcfaf6 !important;
+  --bg2:#fff4ea !important;
+  --surface:#1a1d1f !important;
+  --surface2:#fffdf9 !important;
+  --surface3:#fff7ef !important;
+  --line:rgba(30,24,19,.105) !important;
+  --line-soft:rgba(30,24,19,.065) !important;
+  --text:#0b1118 !important;
+  --text-2:#43505a !important;
+  --muted:#69757d !important;
+  --dim:#8b9499 !important;
+  --orange:#ff641f !important;
+  --orange-2:#f36b2a !important;
+  --shadow:0 24px 70px rgba(70,43,24,.10) !important;
+}
+
+/* Reference typography */
+body{
+  color:var(--text) !important;
+  font-family:"DM Sans",Arial,sans-serif !important;
+}
+
+.page-title h1 b{
+  color:var(--orange) !important;
+}
+
+html.light-mode .page-title h1 b{
+  color:#f05f21 !important;
+}
+
+
+/* =========================================================
+   RETAINIQ REFERENCE BRAND SYSTEM
+   Matched to the supplied RetainIQ reference HTML.
+   ========================================================= */
+.logo{
+  display:flex !important;
+  align-items:center !important;
+  gap:12px !important;
+  color:var(--text) !important;
+  font-family:"Space Grotesk",sans-serif !important;
+  font-size:23px !important;
+  font-weight:700 !important;
+  letter-spacing:-.9px !important;
+  white-space:nowrap !important;
+}
+
+.logo-mark{
+  width:28px !important;
+  height:29px !important;
+  position:relative !important;
+  display:flex !important;
+  align-items:flex-end !important;
+  gap:5px !important;
+  background:none !important;
+  border:0 !important;
+  border-radius:0 !important;
+  box-shadow:none !important;
+  overflow:visible !important;
+}
+
+.logo-mark i{
+  display:block !important;
+  width:6px !important;
+  border-radius:4px 4px 1px 1px !important;
+  background:var(--orange) !important;
+  box-shadow:0 0 18px rgba(255,106,42,.18) !important;
+}
+
+.logo-mark i:nth-child(1){height:13px !important}
+.logo-mark i:nth-child(2){height:20px !important}
+.logo-mark i:nth-child(3){height:28px !important}
+
+.logo-wordmark{
+  display:inline-flex !important;
+  align-items:center !important;
+  gap:3px !important;
+  color:var(--text) !important;
+  font-family:"Space Grotesk",sans-serif !important;
+  font-size:inherit !important;
+  font-weight:700 !important;
+  letter-spacing:-.9px !important;
+}
+
+.logo-wordmark .retain-text{
+  color:var(--text) !important;
+}
+
+.logo-wordmark b{
+  color:var(--orange) !important;
+  font-weight:700 !important;
+}
+
+html.light-mode .logo-wordmark,
+html.light-mode .logo-wordmark .retain-text{
+  color:#101820 !important;
+}
+
+html.light-mode .logo-wordmark b{
+  color:#f15a17 !important;
+}
+
+html.light-mode .logo-mark i{
+  background:#f15b20 !important;
+  box-shadow:0 0 18px rgba(255,106,42,.24) !important;
+}
+
+@media(max-width:680px){
+  .logo{
+    font-size:19px !important;
+    gap:9px !important;
+  }
+  .logo-mark{
+    width:23px !important;
+    height:24px !important;
+    gap:4px !important;
+  }
+  .logo-mark i{width:5px !important}
+  .logo-mark i:nth-child(1){height:11px !important}
+  .logo-mark i:nth-child(2){height:17px !important}
+  .logo-mark i:nth-child(3){height:23px !important}
+}
+
+</style>
+</head>
+<body>
+
+<div class="animated-shapes" aria-hidden="true">
+  <span class="shape s11"></span>
+  <span class="shape s12"></span>
+  <span class="shape s13"></span>
+  <span class="shape s14"></span>
+  <span class="shape s15"></span>
+  <span class="shape s16"></span>
+  <span class="shape s17"></span>
+  <span class="ring r4"></span>
+  <span class="ring r5"></span>
+  <span class="ring r6"></span>
+  <span class="dot d11"></span>
+  <span class="dot d12"></span>
+  <span class="dot d13"></span>
+  <span class="dot d14"></span>
+  <span class="dot d15"></span>
+  <span class="dot d16"></span>
+  <span class="trace t1"></span>
+  <span class="trace t2"></span>
+  <span class="trace t3"></span>
+  <span class="trace t4"></span>
+
+  <span class="shape circle s1"></span>
+  <span class="shape ring s2"></span>
+  <span class="shape diamond s3"></span>
+  <span class="shape hex s4"></span>
+  <span class="shape ring s5"></span>
+  <span class="shape diamond s6"></span>
+  <span class="shape dot s7"></span>
+  <span class="shape dot s8"></span>
+  <span class="shape dot s9"></span>
+  <span class="shape dot s10"></span>
+</div>
+
+<header>
+  <div class="logo" aria-label="RetainIQ">
+  <span class="logo-mark" aria-hidden="true">
+    <i></i><i></i><i></i>
+  </span>
+  <span class="logo-wordmark"><span class="retain-text">RETAIN</span> <b>IQ</b></span>
+</div>
+  <nav class="side-nav"  aria-label="Primary navigation">
+    <a href="bulk_dashboard">
+      <svg viewBox="0 0 24 24"><path d="M4 11.5 12 4l8 7.5"/><path d="M6 10v9a1 1 0 0 0 1 1h4v-6h2v6h4a1 1 0 0 0 1-1v-9"/></svg>
+      <span>Dashboard</span>
+    </a>
+    <a href="customers">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.4"/><path d="M5 20c.9-3.8 3.3-5.8 7-5.8s6.1 2 7 5.8"/></svg>
+      <span>Customers</span>
+    </a>
+    <a class="active" href="customer">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.4"/><path d="M8 20v-1.2c0-2.7 1.8-4.8 4-4.8s4 2.1 4 4.8V20"/><path d="M12 11.5a3.3 3.3 0 1 0 0-6.6 3.3 3.3 0 0 0 0 6.6Z"/></svg>
+      <span>Customer Analysis</span>
+    </a>
+  </nav>
+  <div class="sidebar-controls">
+    <button class="sidebar-theme-toggle" id="sidebarThemeToggle" type="button" aria-label="Switch theme" title="Switch theme">
+      <span class="theme-icon moon-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24"><path d="M20 15.4A8.4 8.4 0 0 1 8.6 4 8.4 8.4 0 1 0 20 15.4Z"/></svg>
+      </span>
+      <span class="theme-icon sun-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.65 17.65l1.42 1.42M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.65 6.35l1.42-1.42"/></svg>
+      </span>
+      <span class="theme-text">Light Mode</span>
+    </button>
+    <button class="sidebar-home" type="button" onclick="window.location.href='dashboard'">
+      <svg viewBox="0 0 24 24"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10.5V20h13v-9.5"/><path d="M9.5 20v-5.5h5V20"/></svg>
+      <span>Home</span>
+    </button>
+  </div>
+</header>
+
+<main class="container">
+
+  <div class="top-bar">
+    <div class="identity-bar" id="identityBar">
+      <div class="identity-chip">
+        <span class="id-icon"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2.5"/><path d="M9 9h6M9 13h6M9 17h3"/></svg></span>
+        <span class="id-copy-txt">
+          <span class="id-label">Customer ID</span>
+          <span class="id-value" id="customerIdValue">—</span>
+        </span>
+        <button class="id-copy" type="button" aria-label="Copy customer ID" onclick="copyCustomerId()">
+          <svg viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></svg>
+        </button>
+      </div>
+      <div class="identity-chip">
+        <span class="id-icon"><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="2.3"/><path d="M4 9.5h16M8 3v4M16 3v4"/></svg></span>
+        <span class="id-copy-txt">
+          <span class="id-label">Analysis Date</span>
+          <span class="id-value" id="analysisDateValue">—</span>
+        </span>
+      </div>
+      <div class="profile-menu-wrap">
+        <button class="avatar-chip profile-trigger" id="profileTrigger" type="button"
+                aria-haspopup="true" aria-expanded="false" aria-label="Open profile menu">
+          <span class="avatar-circle">A</span>
+          <span class="avatar-name">Ansh</span>
+          <svg viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+        <div class="profile-menu" id="profileMenu" role="menu" aria-hidden="true">
+          <div class="profile-menu-user">
+            <span class="avatar-circle">A</span>
+            <div>
+              <strong>Ansh</strong>
+              <span>Profile</span>
+            </div>
+          </div>
+          <button class="logout-button" id="logoutButton" type="button" role="menuitem">
+            <svg viewBox="0 0 24 24"><path d="M10 5H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h4"/><path d="M13 8l4 4-4 4M17 12H9"/></svg>
+            Logout
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-title">
+    <h1>Customer <b>Analysis</b></h1>
+    <p>AI-powered churn risk and customer explanation</p>
+  </div>
+
+  <div class="grid analysis-top-grid">
+
+    <!-- ============= Churn Risk Score ============= -->
+    <div class="card risk-card" id="riskCard">
+      <div class="card-head">
+        <h2>Churn Risk Score <span class="info-dot">i</span></h2>
+      </div>
+
+      <div class="risk-main">
+        <div class="risk-gauge-wrap">
+          <div class="risk-gauge" id="riskVisual" aria-label="Animated churn risk gauge">
+            <svg viewBox="0 0 300 175" role="img" aria-labelledby="gaugeTitle gaugeDesc" overflow="visible">
+              <title id="gaugeTitle">Customer churn risk</title>
+              <desc id="gaugeDesc">Gauge showing churn risk percentage.</desc>
+              <defs>
+                <linearGradient id="riskGradient" x1="24" y1="150" x2="276" y2="150" gradientUnits="userSpaceOnUse">
+                  <stop offset="0%"  stop-color="#22c55e"/>
+                  <stop offset="22%" stop-color="#8fd13a"/>
+                  <stop offset="42%" stop-color="#f2b73c"/>
+                  <stop offset="60%" stop-color="#ff8a3d"/>
+                  <stop offset="78%" stop-color="#ef4c5c"/>
+                  <stop offset="92%" stop-color="#7a1f28"/>
+                  <stop offset="100%" stop-color="#160607"/>
+                </linearGradient>
+                <filter id="gaugeShadow" x="-30%" y="-30%" width="160%" height="160%">
+                  <feDropShadow dx="0" dy="3" stdDeviation="4" flood-opacity=".35"/>
+                </filter>
+              </defs>
+
+              <path class="gauge-halo" d="M24 150 A126 126 0 0 1 276 150" pathLength="100"
+                    stroke="url(#riskGradient)" stroke-width="31"/>
+              <path class="gauge-track" d="M24 150 A126 126 0 0 1 276 150" pathLength="100"
+                    stroke="url(#riskGradient)" stroke-width="20" filter="url(#gaugeShadow)"/>
+              <path class="gauge-inner" d="M36 150 A114 114 0 0 1 264 150"
+                    fill="none" stroke="rgba(255,255,255,.09)" stroke-width="2"/>
+              <g class="gauge-ticks" aria-hidden="true">
+                <path d="M24 150l10-2M50 79l8 5M91 36l5 9M150 24v10M209 36l-5 9M250 79l-8 5M276 150l-10-2"/>
+                <path d="M24 150l-5 0M276 150l5 0" class="gauge-end-tick"/>
+              </g>
+              <g class="gauge-labels" aria-hidden="true">
+                <text x="19" y="168">0%</text>
+                <text x="139" y="18">50%</text>
+                <text x="257" y="168">100%</text>
+              </g>
+
+              <g id="gaugeNeedle" class="gauge-needle" style="transform-origin:150px 150px;transform:rotate(-90deg);transition:transform 1.2s cubic-bezier(.17,.84,.24,1)">
+                <circle cx="150" cy="24" r="9.5" fill="#fff" stroke="#ff8a3d" stroke-width="3"/>
+                <circle cx="150" cy="24" r="3" fill="#ff8a3d" stroke="none"/>
+              </g>
+            </svg>
+
+            <div class="risk-center">
+              <div class="risk-score" id="riskScore">—</div>
+              <div class="risk-score-sub">Churn Risk</div>
+              <div class="risk-label" id="riskLabel">Loading…</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="risk-legend" aria-label="Risk level guide">
+          <div class="risk-legend-title">Risk Level</div>
+          <span><i style="background:#22c55e"></i><label>Low</label><b>0 – 20%</b></span>
+          <span><i></i><label>Medium</label><b>20 – 50%</b></span>
+          <span><i></i><label>High</label><b>50 – 80%</b></span>
+          <span><i></i><label>Very High</label><b>80 – 100%</b></span>
+        </div>
+      </div>
+
+      <div class="risk-bottom-line" id="riskBottomLine">
+        <span class="risk-bottom-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 3 21 20H3L12 3Z"/>
+            <path d="M12 9v5M12 17h.01"/>
+          </svg>
+        </span>
+        <div class="risk-bottom-copy">
+          <strong id="riskBottomTitle">Analyzing churn risk...</strong>
+          <span id="riskBottomDescription">Calculating the customer's probability of churn and risk level.</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============= What Should We Do ============= -->
+    <div class="card recommend-card">
+      <div class="card-head">
+        <h2>
+          <span class="suggestion-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.44 1 1.15 1 1.9v.2h5v-.2c0-.75.4-1.46 1-1.9A6 6 0 0 0 12 3Z"/></svg>
+          </span>
+          What Should We Do?
+        </h2>
+      </div>
+
+      <div class="retention-action" id="retentionAction">
+        <div class="service-recovery-layout">
+          <div class="service-icon" aria-hidden="true">
+            <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M8 25a16 16 0 0 1 32 0"/>
+              <path d="M8 25v7a5 5 0 0 0 5 5h2V22h-3a4 4 0 0 0-4 4Z"/>
+              <path d="M40 25v7a5 5 0 0 1-5 5h-3V22h3a4 4 0 0 1 4 4Z"/>
+              <path d="M31 37c0 3-2.5 5-6 5h-3"/>
+              <circle cx="20" cy="42" r="1.5" fill="currentColor" stroke="none"/>
+            </svg>
+          </div>
+          <div class="service-content">
+            <div class="service-heading">
+              <div class="action-name" id="actionName"></div>
+              <span class="priority" id="actionPriority"></span>
+            </div>
+            <div class="service-copy">
+              <div class="action-block"><div id="actionReason"></div></div>
+              <div class="action-block"><div id="actionRecommendation"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="recommendation" id="recommendation">Analyzing customer...</div>
+
+      <div class="other-actions">
+        <h3>Other Recommended Actions</h3>
+
+        <div class="other-action">
+          <span class="action-label-wrap">
+            <span class="action-list-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="4" y="9.5" width="16" height="11" rx="1.5"/>
+                <path d="M4 13.5h16"/>
+                <path d="M12 9.5v11"/>
+                <path d="M8.2 9.5c-2.4 0-3-3.4-.4-3.7 2-.25 3 1 4.2 3.7"/>
+                <path d="M15.8 9.5c2.4 0 3-3.4.4-3.7-2-.25-3 1-4.2 3.7"/>
+              </svg>
+            </span>
+            <span>Offer a personalized discount</span>
+          </span>
+          <b class="pill-green">High Impact</b>
+        </div>
+
+        <div class="other-action">
+          <span class="action-label-wrap">
+            <span class="action-list-icon blue" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="8" r="3"/>
+                <path d="M5 20c.8-3.5 3-5 7-5s6.2 1.5 7 5"/>
+              </svg>
+            </span>
+            <span>Assign to retention specialist</span>
+          </span>
+          <b class="pill-blue">Recommended</b>
+        </div>
+
+        <div class="other-action">
+          <span class="action-label-wrap">
+            <span class="action-list-icon red" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="8"/>
+                <path d="M12 7v5l3 2"/>
+              </svg>
+            </span>
+            <span>Follow up within 24 hours</span>
+          </span>
+          <b class="pill-red">High Priority</b>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid">
+    <!-- ============= Factors Increasing Churn Risk ============= -->
+    <div class="card factor-card churn-risk-card">
+      <div class="card-head">
+        <div class="factor-title-wrap">
+          <span class="factor-heading-icon risk">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="m3 17 6-6 4 4 8-8"/><path d="M15 6h6v6"/></svg>
+          </span>
+          <h2>Factors Increasing Churn Risk</h2>
+        </div>
+        <span class="badge-soft">Top Risk Drivers</span>
+      </div>
+      <div class="factor-list" id="riskFactors"><div class="loading">Analyzing factors...</div></div>
+    </div>
+
+    <!-- ============= Protective Factors ============= -->
+    <div class="card factor-card protective-card protective-factors-card">
+      <div class="card-head">
+        <div class="factor-title-wrap">
+          <span class="factor-heading-icon protective">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="m3 7 6 6 4-4 8 8"/><path d="M21 7h-6v6"/></svg>
+          </span>
+          <h2>Protective Factors</h2>
+        </div>
+        <span class="badge-soft">Top Positive Drivers</span>
+      </div>
+      <div class="factor-list" id="protectiveFactors"><div class="loading">Analyzing factors...</div></div>
+    </div>
+  </div>
+
+  <!-- ============= Customer Profile ============= -->
+  <section class="card profile-card">
+    <div class="profile-header">
+      <div class="profile-heading">
+        <span class="profile-heading-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.2"/><path d="M5 20c.8-3.6 3.1-5.5 7-5.5s6.2 1.9 7 5.5"/></svg>
+        </span>
+        <div class="profile-heading-copy">
+          <h2>Customer Profile</h2>
+          <p>Key customer information and behavior summary.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="profile-grid" id="profile"></div>
+  </section>
+
+  <div class="error" id="error"></div>
+</main>
+
+
+<script>
+(function(){
+  const trigger = document.getElementById("profileTrigger");
+  const menu = document.getElementById("profileMenu");
+  const logout = document.getElementById("logoutButton");
+  if (!trigger || !menu) return;
+
+  function closeMenu(){
+    menu.classList.remove("open");
+    menu.setAttribute("aria-hidden","true");
+    trigger.setAttribute("aria-expanded","false");
+  }
+  trigger.addEventListener("click", function(e){
+    e.stopPropagation();
+    const open = menu.classList.toggle("open");
+    menu.setAttribute("aria-hidden", String(!open));
+    trigger.setAttribute("aria-expanded", String(open));
+  });
+  document.addEventListener("click", function(e){
+    if (!menu.contains(e.target) && !trigger.contains(e.target)) closeMenu();
+  });
+  document.addEventListener("keydown", function(e){
+    if (e.key === "Escape") closeMenu();
+  });
+  if (logout) {
+    logout.addEventListener("click", function(){
+      sessionStorage.removeItem("selectedCustomer");
+      sessionStorage.removeItem("customerResult");
+      localStorage.removeItem("retainIQ-theme");
+      window.location.href = "/login";
+    });
+  }
+})();
+</script>
+
+<!-- ============= Theme Toggle ============= -->
+
+
+
+<script>
+const stored = sessionStorage.getItem("selectedCustomer") || sessionStorage.getItem("customerResult");
+
+if (!stored) {
+    window.location.href = "/customers";
+} else {
+    loadCustomer();
+}
+
+function getCustomerObject() {
+    const parsed = JSON.parse(stored);
+    return parsed.customer || parsed;
+}
+
+function safeNumber(value, fallback=0) {
+    const n = Number(value);
+    return Number.isFinite(n) ? n : fallback;
+}
+
+function escapeHtml(value) {
+    return String(value ?? "")
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
+}
+
+function riskClass(risk) {
+    if (risk === "High Risk") return "high";
+    if (risk === "Medium Risk") return "medium";
+    return "low";
+}
+
+function priorityClass(priority) {
+    const p = String(priority || "").toLowerCase();
+    if (p === "immediate") return "priority-immediate";
+    if (p === "high") return "priority-high";
+    if (p === "medium") return "priority-medium";
+    return "priority-low";
+}
+
+function setIdentityBar(customer) {
+    const idEl = document.getElementById("customerIdValue");
+    const dateEl = document.getElementById("analysisDateValue");
+    const rawId = customer.customer_id ?? customer.customerId ?? customer.id;
+    idEl.textContent = rawId !== undefined && rawId !== null && String(rawId) !== ""
+        ? String(rawId)
+        : "—";
+    const now = new Date();
+    dateEl.textContent = now.toLocaleDateString("en-US", { month:"short", day:"numeric", year:"numeric" });
+}
+
+function copyCustomerId(){
+    const val = document.getElementById("customerIdValue").textContent;
+    if (navigator.clipboard) navigator.clipboard.writeText(val).catch(()=>{});
+}
+
+async function loadCustomer() {
+    try {
+        const customer = getCustomerObject();
+        setIdentityBar(customer);
+
+        const response = await fetch("/explain-customer", {
+            method: "POST",
+            headers: {"Content-Type":"application/json"},
+            body: JSON.stringify(customer)
+        });
+
+        const result = await response.json();
+
+        if (!response.ok || result.success === false) {
+            throw new Error(result.error || "Unable to analyze customer.");
+        }
+
+        const probability = safeNumber(
+            result.probability ?? result.churn_probability
+        );
+
+        const risk = result.risk_level || (
+            probability >= .70 ? "High Risk" :
+            probability >= .40 ? "Medium Risk" : "Low Risk"
+        );
+
+        const percentage = Math.min(Math.max(probability * 100, 0), 100);
+
+        animateRiskScore(percentage);
+
+        const label = document.getElementById("riskLabel");
+        label.textContent = risk;
+        label.className = "risk-label " + riskClass(risk);
+
+        const riskCard = document.getElementById("riskCard");
+        if (riskCard) {
+            riskCard.dataset.risk =
+                risk === "High Risk" ? "high" :
+                risk === "Medium Risk" ? "medium" : "low";
+        }
+
+        const needle = document.getElementById("gaugeNeedle");
+        if (needle) {
+            const angle = -90 + (percentage / 100) * 180;
+            requestAnimationFrame(() => {
+                needle.style.transform = "rotate(" + angle + "deg)";
+            });
+        }
+
+        updateRiskBottomLine(risk, percentage);
+
+        renderRetentionAction(
+            result.retention_action ||
+            result.result?.retention_action ||
+            null,
+            risk
+        );
+        renderFactors(result.risk_factors || [], true);
+        renderFactors(result.protective_factors || [], false);
+        renderProfile(customer);
+
+        sessionStorage.setItem("customerResult", JSON.stringify({
+            success: true,
+            customer: customer,
+            result: result
+        }));
+    } catch (error) {
+        console.error(error);
+        document.getElementById("error").textContent =
+            "Unable to load customer analysis: " + error.message;
+    }
+}
+
+
+function animateRiskScore(target) {
+    const el = document.getElementById("riskScore");
+    if (!el) return;
+
+    const start = 0;
+    const duration = 1050;
+    const startTime = performance.now();
+
+    function frame(now) {
+        const progress = Math.min((now - startTime) / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        const value = start + (target - start) * eased;
+        el.textContent = value.toFixed(1) + "%";
+        if (progress < 1) requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+}
+
+function updateRiskBottomLine(risk, percentage) {
+    const title = document.getElementById("riskBottomTitle");
+    const description = document.getElementById("riskBottomDescription");
+    if (!title || !description) return;
+
+    if (risk === "High Risk") {
+        title.textContent = "This customer is highly likely to churn.";
+        description.innerHTML =
+            "Take <em>immediate action</em> to prevent churn and reduce retention risk.";
+    } else if (risk === "Medium Risk") {
+        title.textContent = "This customer shows a moderate churn likelihood.";
+        description.innerHTML =
+            "Use targeted engagement to reduce risk and strengthen retention.";
+    } else {
+        title.textContent = "This customer currently has a low churn likelihood.";
+        description.innerHTML =
+            "Continue regular engagement and monitor for changes in customer behavior.";
+    }
+}
+
+function renderRetentionAction(action, risk) {
+    const box = document.getElementById("retentionAction");
+    const fallback = document.getElementById("recommendation");
+
+    if (action && action.action) {
+        document.getElementById("actionName").textContent = action.action;
+
+        const priority = document.getElementById("actionPriority");
+        priority.textContent = "Priority: " + (action.priority || "Medium");
+        priority.className = "priority " + priorityClass(action.priority);
+
+        document.getElementById("actionReason").innerHTML =
+            "<strong>Customer context:</strong> " +
+            escapeHtml(action.reason || "Based on the customer's current churn profile.");
+
+        document.getElementById("actionRecommendation").innerHTML =
+            "<strong>Recommended action:</strong> " +
+            escapeHtml(action.recommendation || "Use a targeted retention intervention.");
+
+        box.style.display = "block";
+        fallback.style.display = "none";
+        return;
+    }
+
+    fallback.textContent =
+        risk === "High Risk"
+            ? "High churn risk detected. Immediate retention intervention is recommended."
+            : risk === "Medium Risk"
+                ? "Moderate churn risk detected. Consider targeted engagement and retention actions."
+                : "Low churn risk detected. Continue regular customer engagement and monitoring.";
+
+    fallback.style.display = "block";
+    box.style.display = "none";
+}
+
+function renderFactors(factors, positive) {
+    const container = document.getElementById(
+        positive ? "riskFactors" : "protectiveFactors"
+    );
+
+    container.innerHTML = "";
+
+    if (!Array.isArray(factors) || factors.length === 0) {
+        container.innerHTML = '<div class="empty">No major factors available.</div>';
+        return;
+    }
+
+    factors.forEach(factor => {
+        const impact = safeNumber(factor.impact);
+        const displayImpact = safeNumber(
+            factor.impact_percent,
+            impact * 100
+        );
+
+        const width = Math.min(Math.abs(impact) * 500, 100);
+        const feature = factor.feature || "Unknown Feature";
+        const value = factor.feature_value;
+
+        const div = document.createElement("div");
+        div.className = "factor";
+
+        const featureKey = String(feature).toLowerCase();
+        let icon;
+
+        if (featureKey.includes("tenure")) {
+            icon = `<svg viewBox="0 0 24 24"><rect x="5" y="5" width="14" height="14" rx="3"/><path d="M8 3v4M16 3v4M5 9h14M12 12v3l2 1"/></svg>`;
+        } else if (featureKey.includes("complaint") || featureKey.includes("complain")) {
+            icon = `<svg viewBox="0 0 24 24"><path d="M6 17.5 4.5 20l3.2-1.7h6.1a6.2 6.2 0 0 0 0-12.4H10A6.2 6.2 0 0 0 4 12.1c0 2 .8 3.8 2 5.4Z"/><path d="M12 9v3M12 15h.01"/></svg>`;
+        } else if (featureKey.includes("category") || featureKey.includes("phone")) {
+            icon = `<svg viewBox="0 0 24 24"><rect x="7" y="3.5" width="10" height="17" rx="2.2"/><path d="M10 6.5h4M10.5 17.5h3"/></svg>`;
+        } else if (featureKey.includes("day") || featureKey.includes("order")) {
+            icon = `<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 7v5l3.2 2"/></svg>`;
+        } else if (featureKey.includes("marital")) {
+            icon = `<svg viewBox="0 0 24 24"><path d="M12 19s-7-4.2-7-9.1A3.9 3.9 0 0 1 12 7a3.9 3.9 0 0 1 7 2.9C19 14.8 12 19 12 19Z"/></svg>`;
+        } else if (featureKey.includes("payment") || featureKey.includes("card")) {
+            icon = `<svg viewBox="0 0 24 24"><rect x="3" y="5.5" width="18" height="13" rx="2.2"/><path d="M3 9.5h18M7 14h4"/></svg>`;
+        } else if (featureKey.includes("amount") || featureKey.includes("cashback") || featureKey.includes("value") || featureKey.includes("hike")) {
+            icon = `<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M14.5 8.7c-.7-.6-1.6-.9-2.6-.9-1.5 0-2.6.8-2.6 1.9 0 2.9 5.3 1 5.3 3.9 0 1.2-1.1 2-2.8 2-1 0-2-.3-2.8-1"/></svg>`;
+        } else if (featureKey.includes("city") || featureKey.includes("tier")) {
+            icon = `<svg viewBox="0 0 24 24"><path d="M12 21s6-5.5 6-11a6 6 0 1 0-12 0c0 5.5 6 11 6 11Z"/><circle cx="12" cy="10" r="2"/></svg>`;
+        } else if (featureKey.includes("address")) {
+            icon = `<svg viewBox="0 0 24 24"><path d="M12 21s6-5.4 6-10.6a6 6 0 1 0-12 0C6 15.6 12 21 12 21Z"/><circle cx="12" cy="10.3" r="2"/></svg>`;
+        } else if (featureKey.includes("gender") || featureKey.includes("number")) {
+            icon = `<svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M3.5 20c.7-3.1 2.5-5 5.5-5s4.8 1.9 5.5 5M14 15c2.5.1 4.2 1.7 5 4"/></svg>`;
+        } else {
+            icon = `<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M9 12h6M12 9v6"/></svg>`;
+        }
+
+        const safeValue = value !== undefined && value !== null && value !== ""
+            ? escapeHtml(value) : "";
+        const barClass = positive
+            ? (width <= 35 ? "positive orange" : "positive")
+            : "negative";
+
+        div.innerHTML = `
+            <div class="factor-row">
+                <span class="factor-icon ${positive ? "" : "green"}">${icon}</span>
+                <span class="factor-name">
+                    ${escapeHtml(feature)}
+                    ${safeValue ? `<small>${safeValue}</small>` : ""}
+                </span>
+                <div class="factor-bar">
+                    <div class="factor-fill ${barClass}" style="width:${width}%"></div>
+                </div>
+                <span class="factor-impact">${displayImpact >= 0 ? "+" : ""}${displayImpact.toFixed(2)}%</span>
+            </div>
+        `;
+
+        container.appendChild(div);
+    });
+}
+
+function renderProfile(customer) {
+    const profile = document.getElementById("profile");
+    profile.innerHTML = "";
+
+    const fields = [
+        ["Tenure", customer.tenure !== undefined ? customer.tenure + (Number(customer.tenure)===1 ? " month" : " months") : undefined],
+        ["City Tier", customer.city_tier],
+        ["Total Orders", customer.order_count],
+        ["Days Since Last Order", customer.days_since_last_order !== undefined ? customer.days_since_last_order + (Number(customer.days_since_last_order)===1 ? " day" : " days") : undefined],
+        ["Cashback Balance", customer.cashback_amount !== undefined ? "₹" + customer.cashback_amount : undefined],
+        ["Satisfaction Score", customer.satisfaction_score !== undefined ? customer.satisfaction_score + " / 5" : undefined],
+        ["Preferred Category", customer.preferred_order_category],
+        ["Payment Mode", customer.preferred_payment_mode],
+        ["Login Device", customer.preferred_login_device],
+        ["Gender", customer.gender],
+        ["Marital Status", customer.marital_status],
+        ["Active Complaint", Number(customer.complain) === 1 ? "Yes" : "No"]
+    ];
+
+    fields.forEach(([label, value]) => {
+        if (value === undefined || value === null || value === "") return;
+
+        const key = label.toLowerCase();
+        const div = document.createElement("div");
+        div.className = "profile-item";
+
+        if (key.includes("complaint") && String(value).toLowerCase() === "yes") {
+            div.classList.add("profile-alert");
+        }
+
+        let iconClass = "";
+        let icon = "";
+
+        if (key.includes("tenure")) {
+            iconClass = "orange";
+            icon = `<svg viewBox="0 0 24 24"><rect x="5" y="6" width="14" height="14" rx="2"/><path d="M8 4v4M16 4v4M5 10h14M9 14h.01M12 14h.01M15 14h.01M9 17h.01M12 17h.01"/></svg>`;
+        } else if (key.includes("city") || key.includes("tier")) {
+            iconClass = "blue";
+            icon = `<svg viewBox="0 0 24 24"><path d="M12 21s6-5.5 6-11a6 6 0 1 0-12 0c0 5.5 6 11 6 11Z"/><circle cx="12" cy="10" r="2"/></svg>`;
+        } else if (key.includes("total orders")) {
+            iconClass = "blue";
+            icon = `<svg viewBox="0 0 24 24"><path d="M5 7h14l-1 13H6L5 7Z"/><path d="M9 7a3 3 0 0 1 6 0M9 11v.01M15 11v.01"/></svg>`;
+        } else if (key.includes("days")) {
+            iconClass = "blue";
+            icon = `<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/></svg>`;
+        } else if (key.includes("cashback")) {
+            iconClass = "blue";
+            icon = `<svg viewBox="0 0 24 24"><path d="M4 7h16v12H4z"/><path d="M7 7V5h11v2M4 11h16"/><circle cx="15.5" cy="15" r="2"/></svg>`;
+        } else if (key.includes("satisfaction")) {
+            iconClass = "orange";
+            icon = `<svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-3-5.6 3 1.1-6.2L3 9.6l6.2-.9L12 3Z"/></svg>`;
+        } else if (key.includes("category")) {
+            iconClass = "purple";
+            icon = `<svg viewBox="0 0 24 24"><path d="M4 6.5V4h2.5L19 16.5 16.5 19 4 6.5Z"/><circle cx="7" cy="7" r="1"/></svg>`;
+        } else if (key.includes("payment")) {
+            iconClass = "blue";
+            icon = `<svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 9h18M7 14h4"/></svg>`;
+        } else if (key.includes("login")) {
+            iconClass = "blue";
+            icon = `<svg viewBox="0 0 24 24"><rect x="5" y="4" width="14" height="16" rx="2"/><path d="M9 17h6M10 7h4"/></svg>`;
+        } else if (key.includes("gender")) {
+            iconClass = "purple";
+            icon = `<svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.4"/><path d="M5 20c.9-3.8 3.3-5.8 7-5.8s6.1 2 7 5.8"/></svg>`;
+        } else if (key.includes("marital")) {
+            iconClass = "purple";
+            icon = `<svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M3.5 20c.7-3.1 2.5-5 5.5-5s4.8 1.9 5.5 5M14 15c2.5.1 4.2 1.7 5 4"/></svg>`;
+        } else if (key.includes("complaint")) {
+            iconClass = "red";
+            icon = `<svg viewBox="0 0 24 24"><path d="M12 3 21 20H3L12 3Z"/><path d="M12 8v6M12 17h.01"/></svg>`;
+        } else {
+            icon = `<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="7"/><path d="M9 12h6"/></svg>`;
+        }
+
+        const longValue = String(value).length > 17 ? " long" : "";
+
+        div.innerHTML = `
+          <span class="profile-item-icon ${iconClass}" aria-hidden="true">${icon}</span>
+          <span class="profile-item-copy">
+            <span class="profile-label">${escapeHtml(label)}</span>
+            <span class="profile-value${longValue}">${escapeHtml(value)}</span>
+          </span>
+        `;
+
+        profile.appendChild(div);
+    });
+}
+
+/* ================= Theme Toggle ================= */
+(function(){
+  const root = document.documentElement;
+  const button = document.getElementById("themeToggle");
+  if (!button) return;
+
+  const savedTheme = localStorage.getItem("retainIQ-theme");
+  if (savedTheme === "light") root.classList.add("light-mode");
+
+  function updateThemeButton(){
+    const light = root.classList.contains("light-mode");
+    button.setAttribute("aria-label", light ? "Switch to dark mode" : "Switch to light mode");
+    button.setAttribute("title", light ? "Switch to dark mode" : "Switch to light mode");
+  }
+
+  updateThemeButton();
+
+  button.addEventListener("click", function(){
+    root.classList.toggle("light-mode");
+    localStorage.setItem(
+      "retainIQ-theme",
+      root.classList.contains("light-mode") ? "light" : "dark"
+    );
+    updateThemeButton();
+  });
+})();
+
+</script>
+
+<script>
+(function(){
+  const sidebarToggle = document.getElementById('sidebarThemeToggle');
+  if (!sidebarToggle) return;
+
+  function syncSidebarTheme(){
+    const light = document.documentElement.classList.contains('light-mode');
+    const moon = sidebarToggle.querySelector('.moon-icon');
+    const sun = sidebarToggle.querySelector('.sun-icon');
+    const text = sidebarToggle.querySelector('.theme-text');
+
+    if (moon) moon.style.display = light ? 'none' : 'grid';
+    if (sun) sun.style.display = light ? 'grid' : 'none';
+    if (text) text.textContent = light ? 'Dark Mode' : 'Light Mode';
+    sidebarToggle.setAttribute('aria-label', light ? 'Switch to dark mode' : 'Switch to light mode');
+    sidebarToggle.setAttribute('title', light ? 'Switch to dark mode' : 'Switch to light mode');
+  }
+
+  sidebarToggle.addEventListener('click', function(){
+    const root = document.documentElement;
+    const nextLight = !root.classList.contains('light-mode');
+    root.classList.toggle('light-mode', nextLight);
+    localStorage.setItem('retainIQ-theme', nextLight ? 'light' : 'dark');
+    syncSidebarTheme();
+  });
+
+  syncSidebarTheme();
+})();
+</script>
+
+</body>
+</html>

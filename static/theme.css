@@ -1,0 +1,369 @@
+/* ============================================================
+   RETAIN IQ — GLOBAL DESIGN SYSTEM
+   This file re-skins the EXISTING class names already used across
+   every template. No HTML structure, IDs, or JS logic is required
+   to change for this to take effect — it purely restyles what is
+   already there, plus a few additive, purely-decorative elements
+   (background blobs, ripples, reveal-on-scroll) inserted by
+   effects.js / a single markup snippet in each page.
+   ============================================================ */
+
+:root {
+  --riq-ink: #0b1220;
+  --riq-ink-soft: #4b5568;
+  --riq-muted: #6b7280;
+  --riq-line: #e6e9f0;
+  --riq-bg: #f4f6fc;
+  --riq-card: #ffffff;
+  --riq-accent: #4f46e5;
+  --riq-accent-2: #7c3aed;
+  --riq-accent-3: #06b6d4;
+  --riq-danger: #ef4444;
+  --riq-danger-soft: #fee2e2;
+  --riq-warn: #f59e0b;
+  --riq-warn-soft: #fef3c7;
+  --riq-good: #22c55e;
+  --riq-good-soft: #dcfce7;
+  --riq-shadow: 0 10px 30px rgba(17, 24, 39, 0.08);
+  --riq-shadow-lg: 0 20px 45px rgba(17, 24, 39, 0.12);
+  --riq-radius: 18px;
+  --riq-ease: cubic-bezier(.22,1,.36,1);
+}
+
+/* ---------- base ---------- */
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--riq-bg) !important;
+  color: var(--riq-ink) !important;
+  font-family: "Segoe UI", Arial, sans-serif !important;
+  position: relative;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+::selection { background: rgba(79,70,229,.22); }
+
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: linear-gradient(var(--riq-accent), var(--riq-accent-2)); border-radius: 20px; }
+
+/* ============================================================
+   ANIMATED BACKGROUND (decorative div injected as first child
+   of <body>: <div class="riq-bg" aria-hidden="true">...) 
+   ============================================================ */
+.riq-bg {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+  background:
+    radial-gradient(1200px 700px at 8% -10%, rgba(79,70,229,.10), transparent 60%),
+    radial-gradient(1000px 700px at 110% 10%, rgba(6,182,212,.10), transparent 55%),
+    linear-gradient(180deg, #f7f8fd 0%, #eef1fb 100%);
+}
+.riq-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(60px);
+  opacity: .35;
+  animation: riqFloat 18s ease-in-out infinite;
+  will-change: transform;
+}
+.riq-blob-1 { width: 420px; height: 420px; left: -120px; top: -100px; background: radial-gradient(circle at 30% 30%, #818cf8, transparent 70%); animation-delay: 0s; }
+.riq-blob-2 { width: 480px; height: 480px; right: -160px; top: 15%; background: radial-gradient(circle at 60% 40%, #67e8f9, transparent 70%); animation-delay: -6s; }
+.riq-blob-3 { width: 380px; height: 380px; left: 30%; bottom: -180px; background: radial-gradient(circle at 50% 50%, #c4b5fd, transparent 70%); animation-delay: -11s; }
+
+@keyframes riqFloat {
+  0%   { transform: translate(0,0) scale(1); }
+  33%  { transform: translate(30px,-40px) scale(1.08); }
+  66%  { transform: translate(-25px,25px) scale(0.96); }
+  100% { transform: translate(0,0) scale(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .riq-blob { animation: none; }
+  html { scroll-behavior: auto; }
+}
+
+/* ---------- header ---------- */
+header {
+  background: rgba(255,255,255,.75) !important;
+  backdrop-filter: blur(14px) saturate(160%);
+  -webkit-backdrop-filter: blur(14px) saturate(160%);
+  border-bottom: 1px solid var(--riq-line) !important;
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  animation: riqSlideDown .5s var(--riq-ease);
+}
+@keyframes riqSlideDown { from { transform: translateY(-100%); } to { transform: translateY(0); } }
+
+.logo {
+  background: linear-gradient(135deg, var(--riq-accent), var(--riq-accent-2));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent !important;
+  letter-spacing: .5px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.logo::before {
+  content: "";
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+  background: linear-gradient(135deg, var(--riq-accent), var(--riq-accent-3));
+  box-shadow: 0 0 0 4px rgba(79,70,229,.15);
+  animation: riqPulseDot 2.4s ease-in-out infinite;
+}
+@keyframes riqPulseDot {
+  0%,100% { transform: scale(1); box-shadow: 0 0 0 4px rgba(79,70,229,.15); }
+  50% { transform: scale(1.25); box-shadow: 0 0 0 7px rgba(79,70,229,.06); }
+}
+
+/* ---------- generic containers / cards ---------- */
+.container { animation: riqFadeUp .6s var(--riq-ease); }
+
+.card, .table-card, .summary-card, .metric-card, .info-box, .risk-card,
+.upload-area, .options .card, main.container > .card {
+  background: var(--riq-card) !important;
+  border: 1px solid var(--riq-line);
+  border-radius: var(--riq-radius) !important;
+  box-shadow: var(--riq-shadow) !important;
+  transition: transform .35s var(--riq-ease), box-shadow .35s var(--riq-ease), border-color .35s;
+}
+/* subtle shadow-only lift for large containers (forms, tables) */
+.card:hover, .table-card:hover {
+  box-shadow: var(--riq-shadow-lg) !important;
+  border-color: rgba(79,70,229,.18);
+}
+/* fuller lift for compact "stat" / "choice" cards */
+.summary-card:hover, .metric-card:hover, .info-box:hover,
+.options .card:hover, .risk-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--riq-shadow-lg) !important;
+  border-color: rgba(79,70,229,.25);
+}
+
+.riq-reveal { opacity: 0; transform: translateY(18px); }
+.riq-reveal.riq-in { animation: riqFadeUp .7s var(--riq-ease) forwards; }
+
+@keyframes riqFadeUp {
+  from { opacity: 0; transform: translateY(18px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.page-title h1 {
+  background: linear-gradient(135deg, var(--riq-ink), var(--riq-ink-soft));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.page-title p { color: var(--riq-muted) !important; }
+
+/* dashboard option cards (index/dashboard icon cards) */
+.options .card, .card.risk-card { position: relative; overflow: hidden; }
+.icon {
+  display: inline-block;
+  transition: transform .4s var(--riq-ease);
+}
+.options .card:hover .icon { transform: scale(1.18) rotate(-4deg); }
+
+/* ---------- buttons ---------- */
+button {
+  position: relative;
+  overflow: hidden;
+  transition: transform .2s var(--riq-ease), box-shadow .25s var(--riq-ease), opacity .2s, filter .25s !important;
+}
+button:not(.back-button):not(:disabled) {
+  background: linear-gradient(135deg, var(--riq-accent), var(--riq-accent-2)) !important;
+  box-shadow: 0 8px 20px rgba(79,70,229,.28);
+}
+button:not(:disabled):hover {
+  transform: translateY(-2px);
+  filter: brightness(1.06);
+  box-shadow: 0 12px 26px rgba(79,70,229,.32);
+}
+button:not(:disabled):active { transform: translateY(0) scale(.98); }
+button:disabled { cursor: not-allowed; }
+
+.back-button {
+  background: #f3f4f6 !important;
+  color: var(--riq-ink) !important;
+  box-shadow: none !important;
+  border: 1px solid var(--riq-line) !important;
+}
+.back-button:hover { background: #eceef3 !important; box-shadow: 0 6px 14px rgba(17,24,39,.08) !important; }
+
+.riq-ripple {
+  position: absolute;
+  border-radius: 50%;
+  transform: scale(0);
+  animation: riqRipple .6s ease-out;
+  background: rgba(255,255,255,.55);
+  pointer-events: none;
+}
+@keyframes riqRipple { to { transform: scale(2.6); opacity: 0; } }
+
+/* ---------- inputs / selects ---------- */
+input, select {
+  transition: border-color .25s var(--riq-ease), box-shadow .25s var(--riq-ease), transform .2s var(--riq-ease) !important;
+  background: #fbfbfe !important;
+}
+input:hover, select:hover { border-color: #c7cbe0 !important; }
+input:focus, select:focus {
+  border-color: var(--riq-accent) !important;
+  box-shadow: 0 0 0 4px rgba(79,70,229,.14) !important;
+  transform: translateY(-1px);
+  background: #ffffff !important;
+}
+.field:focus-within label { color: var(--riq-accent); }
+.field label { transition: color .2s; }
+
+select {
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: linear-gradient(45deg, transparent 50%, #6b7280 50%), linear-gradient(135deg, #6b7280 50%, transparent 50%) !important;
+  background-position: calc(100% - 20px) calc(50% - 3px), calc(100% - 14px) calc(50% - 3px) !important;
+  background-size: 6px 6px, 6px 6px !important;
+  background-repeat: no-repeat !important;
+  padding-right: 34px !important;
+}
+
+/* ---------- manual.html: per-section accent + icon (order-based, no markup change) ---------- */
+form#customerForm .section { position: relative; padding-left: 18px; }
+form#customerForm .section::before {
+  content: "";
+  position: absolute;
+  left: 0; top: 2px; bottom: 8px;
+  width: 4px;
+  border-radius: 4px;
+  background: linear-gradient(180deg, var(--riq-accent), var(--riq-accent-3));
+}
+form#customerForm .section:nth-of-type(1) .section-title::before { content: "🧭  "; }
+form#customerForm .section:nth-of-type(2) .section-title::before { content: "⚙️  "; }
+form#customerForm .section:nth-of-type(3) .section-title::before { content: "👤  "; }
+form#customerForm .field { animation: riqFadeUp .5s var(--riq-ease) backwards; }
+form#customerForm .form-grid .field:nth-child(1) { animation-delay: .02s; }
+form#customerForm .form-grid .field:nth-child(2) { animation-delay: .06s; }
+form#customerForm .form-grid .field:nth-child(3) { animation-delay: .10s; }
+form#customerForm .form-grid .field:nth-child(4) { animation-delay: .14s; }
+form#customerForm .form-grid .field:nth-child(5) { animation-delay: .18s; }
+form#customerForm .form-grid .field:nth-child(6) { animation-delay: .22s; }
+
+/* ---------- status / feedback ---------- */
+.status.error, .status.error * { color: var(--riq-danger) !important; }
+.status.success { background: var(--riq-good-soft) !important; }
+.status.loading { position: relative; padding-left: 34px !important; }
+.status.loading::before {
+  content: "";
+  position: absolute;
+  left: 12px; top: 50%;
+  width: 14px; height: 14px;
+  margin-top: -7px;
+  border-radius: 50%;
+  border: 2px solid rgba(79,70,229,.25);
+  border-top-color: var(--riq-accent);
+  animation: riqSpin .8s linear infinite;
+}
+@keyframes riqSpin { to { transform: rotate(360deg); } }
+
+/* ---------- risk badges ---------- */
+.risk, .risk-label {
+  transition: transform .25s var(--riq-ease);
+}
+.risk.high, .risk-label.high { background: var(--riq-danger-soft) !important; color: #991b1b !important; box-shadow: 0 0 0 0 rgba(239,68,68,.5); animation: riqBadgePulseHigh 2.2s ease-in-out infinite; }
+.risk.medium, .risk-label.medium { background: var(--riq-warn-soft) !important; color: #92400e !important; }
+.risk.low, .risk-label.low { background: var(--riq-good-soft) !important; color: #166534 !important; }
+@keyframes riqBadgePulseHigh {
+  0%,100% { box-shadow: 0 0 0 0 rgba(239,68,68,.35); }
+  50% { box-shadow: 0 0 0 6px rgba(239,68,68,0); }
+}
+
+/* progress bars everywhere (customer.html, bulk_dashboard.html) */
+.risk-bar, .factor-bar, .feature-bar {
+  background: #eef0f6 !important;
+  overflow: hidden;
+  position: relative;
+}
+.risk-fill, .factor-fill, .feature-fill {
+  transition: width 1.1s var(--riq-ease) !important;
+  background-size: 200% 100%;
+}
+.risk-fill { background-image: linear-gradient(90deg, var(--riq-danger), #f87171) !important; }
+.risk-fill.high { background-image: linear-gradient(90deg, #ef4444, #f97316) !important; }
+.risk-fill.medium { background-image: linear-gradient(90deg, #f59e0b, #fbbf24) !important; }
+.risk-fill.low { background-image: linear-gradient(90deg, #22c55e, #4ade80) !important; }
+.factor-fill.positive { background-image: linear-gradient(90deg, #ef4444, #f97316) !important; }
+.factor-fill.negative { background-image: linear-gradient(90deg, #22c55e, #4ade80) !important; }
+.feature-fill { background-image: linear-gradient(90deg, var(--riq-accent), var(--riq-accent-2)) !important; }
+
+/* subtle shimmer sweep on filled bars */
+.risk-fill::after, .factor-fill::after, .feature-fill::after {
+  content: "";
+  position: absolute; inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.35), transparent);
+  animation: riqShimmer 2.4s linear infinite;
+}
+@keyframes riqShimmer { from { transform: translateX(-100%); } to { transform: translateX(100%); } }
+
+/* risk gauge score (customer.html) */
+.risk-score {
+  background: linear-gradient(135deg, var(--riq-ink), var(--riq-accent));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: riqPopIn .5s var(--riq-ease);
+}
+@keyframes riqPopIn { from { opacity: 0; transform: scale(.85); } to { opacity: 1; transform: scale(1); } }
+
+/* priority chips */
+.priority { transition: transform .2s; }
+.priority-immediate { background: var(--riq-danger-soft) !important; color:#991b1b !important; }
+.priority-high { background: var(--riq-warn-soft) !important; color:#92400e !important; }
+.priority-medium { background:#dbeafe !important; color:#1d4ed8 !important; }
+.priority-low { background: var(--riq-good-soft) !important; color:#166534 !important; }
+
+/* profile items */
+.profile-item {
+  transition: background .25s, transform .25s;
+  border: 1px solid transparent;
+}
+.profile-item:hover { background: #f0f1fb !important; transform: translateY(-2px); border-color: var(--riq-line); }
+
+/* ---------- tables ---------- */
+table { border-collapse: separate !important; border-spacing: 0; }
+th { background: #f7f8fd !important; color: var(--riq-ink-soft); text-transform: uppercase; font-size: 11.5px !important; letter-spacing: .06em; }
+thead th:first-child { border-top-left-radius: 12px; }
+thead th:last-child { border-top-right-radius: 12px; }
+tbody tr { transition: background .2s, transform .2s; }
+tbody tr:hover { background: #f5f6fe !important; }
+.view-button, .select-button {
+  background: linear-gradient(135deg, var(--riq-ink), #2b3350) !important;
+}
+
+/* ---------- upload dropzone ---------- */
+.upload-area {
+  border: 2px dashed #c7cbe0 !important;
+  background: linear-gradient(180deg, #fbfbff, #f5f6fd) !important;
+}
+.upload-area:hover {
+  border-color: var(--riq-accent) !important;
+  background: #f0f0ff !important;
+  transform: translateY(-2px) scale(1.005);
+}
+.upload-icon { display:inline-block; animation: riqBounce 2.6s ease-in-out infinite; }
+@keyframes riqBounce { 0%,100%{ transform: translateY(0);} 50%{ transform: translateY(-8px);} }
+
+/* ---------- login card specific polish ---------- */
+.container > .logo { font-size: 30px; }
+
+/* ---------- risk-tinted card glow (customer.html, set by effects.js) ---------- */
+.riq-tint-high { box-shadow: var(--riq-shadow), 0 0 0 1px rgba(239,68,68,.18), 0 0 40px rgba(239,68,68,.10) !important; }
+.riq-tint-medium { box-shadow: var(--riq-shadow), 0 0 0 1px rgba(245,158,11,.18), 0 0 40px rgba(245,158,11,.10) !important; }
+.riq-tint-low { box-shadow: var(--riq-shadow), 0 0 0 1px rgba(34,197,94,.18), 0 0 40px rgba(34,197,94,.10) !important; }
