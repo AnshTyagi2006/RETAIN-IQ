@@ -1,28 +1,56 @@
 # RetainIQ — Customer Retention Intelligence Platform
 
-RetainIQ is an end-to-end ML platform for predicting customer churn, explaining predictions, segmenting customer risk, and recommending retention actions.
+RetainIQ is an end-to-end machine learning platform for predicting customer churn, explaining predictions, identifying high-risk customers, and recommending actionable retention strategies.
 
-## Features
+## 🚀 Live Demo
+
+**[Launch RetainIQ](https://retainiq-production.up.railway.app)**
+
+> Try the deployed web application directly from your browser.
+
+## ✨ Features
 
 - User authentication and secure sessions
-- Individual and batch churn prediction
+- Individual customer churn prediction
+- Batch CSV/Excel churn prediction
 - Sample dataset workflow
 - High / Medium / Low risk classification
-- SHAP-based individual explanations
+- SHAP-based individual prediction explanations
 - Business analytics and customer segmentation
+- Customer risk exploration and filtering
 - Retention action recommendations
-- MySQL persistence
+- MySQL data persistence
 - Per-user dataset isolation
+- Ownership and security validation
+- Automated testing
 
-## Technology
+## 🧠 What RetainIQ Does
 
-Python, Flask, Pandas, NumPy, Scikit-learn, XGBoost, SHAP, MySQL, HTML/CSS/JavaScript, Pytest.
+RetainIQ follows the complete decision-making pipeline:
 
-## Risk Levels
+```text
+Customer Data
+      ↓
+Churn Prediction
+      ↓
+Risk Classification
+      ↓
+Explain Why
+      ↓
+Prioritize Customers
+      ↓
+Recommend Retention Action
+```
 
-- `>= 0.70` → High
-- `0.40–<0.70` → Medium
-- `< 0.40` → Low
+The goal is not simply to predict churn, but to turn an ML prediction into a practical business decision.
+
+## 📊 Risk Levels
+
+| Churn Probability | Risk Level |
+|---|---|
+| `>= 0.70` | High |
+| `0.40 – < 0.70` | Medium |
+| `< 0.40` | Low |
 
 ## 🖥️ Screenshots
 
@@ -32,41 +60,109 @@ Python, Flask, Pandas, NumPy, Scikit-learn, XGBoost, SHAP, MySQL, HTML/CSS/JavaS
 
 ### Bulk Retention Dashboard
 
-![RetainIQ Bulk Dashboard](docs/screenshots/02%20-bulkdashboard.png)
+![RetainIQ Bulk Dashboard](docs/screenshots/02-bulkdashboard.png)
 
 ### Customer Analysis
 
-![RetainIQ Customer Analysis](docs/screenshots/03%20-customeranalysis.png)
+![RetainIQ Customer Analysis](docs/screenshots/03-customeranalysis.png)
 
-## Run Locally
+## 🛠️ Technology Stack
+
+- **Python**
+- **Flask**
+- **Pandas**
+- **NumPy**
+- **Scikit-learn**
+- **XGBoost**
+- **SHAP**
+- **MySQL**
+- **HTML / CSS / JavaScript**
+- **Pytest**
+- **Docker**
+
+## 🔐 Security
+
+RetainIQ includes application-level security features such as:
+
+- Password hashing
+- Session-based authentication
+- Protected application routes
+- Per-user dataset ownership
+- User-scoped dataset and customer queries
+- Cross-user ownership validation
+- Environment-based secrets and database configuration
+
+## 📁 Project Structure
+
+```text
+RetainIQ/
+├── Data/
+│   ├── processed/
+│   └── raw/
+├── docs/
+├── models/
+├── notebooks/
+├── scripts/
+├── static/
+├── templates/
+├── tests/
+├── .env.example
+├── Dockerfile
+├── app.py
+├── requirements.txt
+└── wsgi.py
+```
+
+## ▶️ Run Locally
+
+Install the dependencies:
 
 ```bash
 pip install -r requirements.txt
+```
+
+Configure the required environment variables in `.env`, then start the application:
+
+```bash
 python app.py
 ```
 
-Open `http://127.0.0.1:5000`.
-
-## Testing
-
-```bash
-python -m pytest tests/test_retainiq_smoke.py -v
-python -m pytest tests/security.py -v
-```
-
-Current validation: **30/30 automated tests passed** (22 smoke + 8 ownership/security).
-
-## Core Flow
+Open:
 
 ```text
-Dataset → Prediction → Risk → Explanation → Retention Action
+http://127.0.0.1:5000
 ```
 
-## Deployment
+## 🧪 Testing
 
-RetainIQ is deployment-ready and can be hosted as a public web application.
+Run the complete test suite:
 
-The included deployment configuration supports a production Flask server and a persistent MySQL database.
+```bash
+pytest -q
+```
+
+Current validation:
+
+**30/30 automated tests passed**
+
+- 22 smoke tests
+- 8 ownership/security tests
+
+## 🌐 Deployment
+
+RetainIQ is deployed as a public web application using a production Flask server and persistent MySQL database.
+
+**Live application:**  
+**[retainiq-production.up.railway.app](https://retainiq-production.up.railway.app)**
+
+## 📚 Documentation
+
+Additional project documentation is available in the `docs/` directory, including:
+
+- Architecture
+- API reference
+- Project documentation
+- Final testing checklist
 
 ## 👨‍💻 About the Author
 
@@ -89,4 +185,3 @@ RetainIQ was built around a simple idea:
 *Turning ML predictions into retention decisions.*
 
 </div>
-
